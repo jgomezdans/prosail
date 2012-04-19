@@ -16,7 +16,7 @@ Installing the bindings
 -------------------------
 
 The installation of the bindings is quite straightforward: unpack the distribution
-and run the following command
+and run the following command   
 
     python setup.py install
     
@@ -36,4 +36,16 @@ You will need a working FORTRAN compiler. I have only tested this with GCC on Li
 Using the bindings
 ---------------------
 
-The bindings offer a single function, `run_prosail`.
+The bindings offer a single function, ``run_prosail``.
+
+    retval = run_prosail(n,cab,car,cbrown,cw,cm,lai,lidfa,lidfb,psoil,hspot,tts,tto,psi)
+    
+The parameters that are fed into ``run_prosail`` are
+
++-------------+---------------------------------+--------------+------------+-------------+
+| Parameter   | Description of parameter        | Units        |Typical min | Typical max |
++-------------+---------------------------------+--------------+------------+-------------+
+|   N         | Leaf structure parameter        | N/A          | 0.8        | 2.5         |
++-------------+---------------------------------+--------------+------------+-------------+
+|  cab        | Chlorophyll a+b concentration   | ug/cm2       | 0          | 200         |
++-------------+---------------------------------+--------------+------------+-------------+
