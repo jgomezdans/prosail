@@ -9,7 +9,7 @@ canopy reflectance models. The code is written in FORTRAN. The original fortran
 code was downloaded from `Jussieu <http://teledetection.ipgp.jussieu.fr/prosail/>`_. 
 I only added a function to simplify writing the wrappers, and you should go to
 that page to get newer versions of the code. A recent review of the use of both
-models is availabe in `this paper <http://webdocs.dow.wur.nl/internet/grs/Workshops/Environmental_Applications_Imaging_Spectroscopy/12_Jacquemoud_Prospect/IEEE_Jacquemoud_PROSPECT.pdf>`.
+models is availabe in `this paper <http://webdocs.dow.wur.nl/internet/grs/Workshops/Environmental_Applications_Imaging_Spectroscopy/12_Jacquemoud_Prospect/IEEE_Jacquemoud_PROSPECT.pdf>`_.
 
 
 Installing the bindings
