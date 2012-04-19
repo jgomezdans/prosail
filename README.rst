@@ -16,18 +16,19 @@ Installing the bindings
 -------------------------
 
 The installation of the bindings is quite straightforward: unpack the distribution
-and run the following command:..
+and run the following command
 
     python setup.py install
     
 You can usually install it to your user's directory (if you haven't got superuser
-privileges) by ..
+privileges) by 
 
     python setup.py install --user
     
-.. note::
+Note
+*******
     
-    You will need a working FORTRAN compiler. I have only tested this with GCC on Linux, but it should work on other systems. You can also pass optimisation flags to the compiler: ..
+You will need a working FORTRAN compiler. I have only tested this with GCC on Linux, but it should work on other systems. You can also pass optimisation flags to the compiler: 
     
     python setup.py config_fc  --fcompiler=gnu95   --arch=-march=native --opt=-O3  install --user
     
