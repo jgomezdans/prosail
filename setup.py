@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 """Setup script for building prosail's python bindings"""
+
 def configuration(parent_package='',top_path=None):
     from numpy.distutils.misc_util import Configuration
     config = Configuration('prosail',parent_package,top_path)
@@ -22,4 +23,5 @@ if __name__ == "__main__":
         description=description, \
         author=author, \
         author_email = author_email, \
-        configuration=configuration )
+        configuration = configuration, \
+        packages=["prosail"])

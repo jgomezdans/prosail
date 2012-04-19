@@ -1,1 +1,1 @@
-from prosail import prosail
+from prosail import run_prosail
