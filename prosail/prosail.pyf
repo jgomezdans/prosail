@@ -1,0 +1,35 @@
+!    -*- f90 -*-
+! Note: the context of this file is case sensitive.
+
+python module prosail ! in 
+    interface  ! in :prosail
+        subroutine run_prosail(n,cab,car,cbrown,cw,cm,lai,lidfa,lidfb,psoil,hspot,tts,tto,psi,retval) ! in :prosail:run_prosail.f90
+            use mod_sail
+            use mod_angle
+            use mod_flag_util
+            use mod_dataspec_p5b
+            use mod_output_prospect
+            use mod_staticvar
+            real*8 intent(in) :: n
+            real*8 intent(in) :: cab
+            real*8 intent(in) :: car
+            real*8 intent(in) :: cbrown
+            real*8 intent(in) :: cw
+            real*8 intent(in) :: cm
+            real*8 intent(in) :: lai
+            real*8 intent(in) :: lidfa
+            real*8 intent(in) :: lidfb
+            real*8 intent(in) :: psoil
+            real*8 intent(in) :: hspot
+            real*8 intent(in) :: tts
+            real*8 intent(in) :: tto
+            real*8 intent(in) :: psi
+            real*8 dimension(2101),intent(out) :: retval
+        end subroutine run_prosail
+    end interface 
+end python module prosail
+
+! This file was auto-generated with f2py (version:2).
+! See http://cens.ioc.ee/projects/f2py2e/
+! Compile this file with the following command:
+!f2py -c --fcompiler=gnu95 --f90exec=/usr/bin/gfortran44 --f77exec=/usr/bin/gfortran44 prosail.pyf  dladgen.f *.f90
