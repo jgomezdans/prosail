@@ -96,7 +96,24 @@ are given by the following parameter  choices:
    
     
 
+A simple example of using bindings would be
 
+ cm=0.009
+ cab = 80
+ car = 15
+ cbrown = 0
+ cw = 0.001
+ lidfa = 0
+ lidfb = 0
+ psoil = 0
+ hspot = 0.01
+ tts = 30
+ tto = 10
+ phi = 0
+ lai = np.arange ( 0, 5, 0.2 )
+ for l in lai:
+    plt.plot ( run_prosail(1.5,cab,car,cbrown,cw,cm,l,lidfa,lidfb,psoil,hspot,tts,tto,psi))
+    
+This results in a simulation of surface reflectance (from 400 to 2500 nm) as a function of LAI and under the other parameters' prescribed values. This yields the following
 
-
-To use the bindings, 
+.. image:: http://i.imgur.com/2Hh0z.png
