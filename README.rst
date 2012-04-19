@@ -76,7 +76,7 @@ The parameters that are fed into ``run_prosail`` are
 
 ``lidfa`` and ``lidfb`` parameters control the leaf angle distribution. Typical distributions
 are given by the following parameter  choices:
-    
+   ==========      ======    =========
    LIDF type       lidfa     lidfb
    ==========      ======    =========
    Planophile      1        b
@@ -85,7 +85,7 @@ are given by the following parameter  choices:
    Extremophile    0        1
    Spherical      -0.35    -0.15
    Uniform         0        0
-   
+   ==========      ======    =========
    
    
     
