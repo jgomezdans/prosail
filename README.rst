@@ -78,8 +78,8 @@ The parameters that are fed into ``run_prosail`` are
 are given by the following parameter  choices:
 
 +--------------+-----------+------------------+
-|LIDF type      |  lidfa    |    lidfb        |
-+===============+===========+=================+
+|LIDF type     |  lidfa    |    lidfb         |
++==============+===========+==================+
 |Planophile    |    1      |  b               |
 +--------------+-----------+------------------+
 |   Erectophile|    -1     |   0              |
