@@ -44,7 +44,7 @@ The parameters that are fed into ``run_prosail`` are
 
 +-------------+---------------------------------+--------------+------------+-------------+
 | Parameter   | Description of parameter        | Units        |Typical min | Typical max |
-+-------------+---------------------------------+--------------+------------+-------------+
++=============+=================================+==============+============+=============+
 |   N         | Leaf structure parameter        | N/A          | 0.8        | 2.5         |
 +-------------+---------------------------------+--------------+------------+-------------+
 |  cab        | Chlorophyll a+b concentration   | ug/cm2       | 0          | 200         |
@@ -77,16 +77,21 @@ The parameters that are fed into ``run_prosail`` are
 ``lidfa`` and ``lidfb`` parameters control the leaf angle distribution. Typical distributions
 are given by the following parameter  choices:
 
-   ==========      ======    =========
-   LIDF type       lidfa     lidfb
-   ==========      ======    =========
-   Planophile      1        b
-   Erectophile    -1        0
-   Plagiophile     0       -1
-   Extremophile    0        1
-   Spherical      -0.35    -0.15
-   Uniform         0        0
-   ==========      ======    =========
++--------------+-----------+------------------+
+|LIDF type      |  lidfa    |    lidfb        |
++===============+===========+=================+
+|Planophile    |    1      |  b               |
++--------------+-----------+------------------+
+|   Erectophile|    -1     |   0              |
++--------------+-----------+------------------+
+|   Plagiophile|     0     |  -1              |
++--------------+-----------+------------------+
+|  Extremophile|    0      |  1               |
++--------------+-----------+------------------+
+|   Spherical  |    -0.35  |  -0.15           |
++--------------+-----------+------------------+
+|   Uniform    |     0     |   0              |
++--------------+-----------+------------------+
    
    
     
