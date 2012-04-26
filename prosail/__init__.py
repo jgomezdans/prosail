@@ -16,7 +16,7 @@ def trans_prosail ( N, cab, car, cbrown, cw, cm, lai, lidfa, lidfb, psoil, \
     xkab = skab * np.log ( cab )
     xkar = skar * np.log ( car )
     xkw = skw * np.log ( cw )
-    xdm = skm * np.log ( dm )
+    xdm = skm * np.log ( cm )
     # Run the PROSAIL model
     retval = run_prosail ( N, xkab, xkar, cbrown, xkw, xdm, xlai, \
             lidfa, lidfb, psoil, hspot, tts, tto, psi )
