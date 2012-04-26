@@ -1,3 +1,4 @@
+import numpy as np
 from prosail import run_prosail
 
 def trans_prosail ( N, cab, car, cbrown, cw, cm, lai, lidfa, lidfb, psoil, \
