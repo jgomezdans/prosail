@@ -1,5 +1,5 @@
 import numpy as np
-from prosail import run_prosail
+from prosail import run_prosail, prospect_5B
 
 def trans_prosail ( N, cab, car, cbrown, cw, cm, lai, lidfa, lidfb, psoil, \
         hspot, tts, tto, psi ):
