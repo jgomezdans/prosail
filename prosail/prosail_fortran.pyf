@@ -1,9 +1,9 @@
 !    -*- f90 -*-
 ! Note: the context of this file is case sensitive.
-
-python module prosail ! in 
-    interface  ! in :prosail
-        subroutine run_prosail(n,cab,car,cbrown,cw,cm,lai,lidfa,lidfb,psoil,hspot,tts,tto,psi,retval) ! in :prosail:run_prosail.f90
+! run_prosail ( N, Cab, Car, Cbrown, Cw, Cm, lai, LIDFa, LIDFb, rsoil, psoil, hspot, tts, tto, psi, TypeLidf, retval )
+python module prosail_fortran ! in 
+    interface  ! in :prosail_fortran
+        subroutine run_prosail(n,cab,car,cbrown,cw,cm,lai,lidfa,lidfb,rsoil,psoil,hspot,tts,tto,psi,TypeLidf,retval) ! in :prosail:run_prosail.f90
             use mod_sail
             use mod_angle
             use mod_flag_util
@@ -20,14 +20,16 @@ python module prosail ! in
             real*8 intent(in) :: lidfa
             real*8 intent(in) :: lidfb
             real*8 intent(in) :: psoil
+            real*8 intent(in) :: bsoil
             real*8 intent(in) :: hspot
             real*8 intent(in) :: tts
             real*8 intent(in) :: tto
             real*8 intent(in) :: psi
+            integer ntent(in) :: TypeLidf
             real*8 dimension(2101),intent(out) :: retval
         end subroutine run_prosail
     end interface 
-end python module prosail
+end python module prosail_fortran
 
 ! This file was auto-generated with f2py (version:2).
 ! See http://cens.ioc.ee/projects/f2py2e/
