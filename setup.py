@@ -23,5 +23,5 @@ if __name__ == "__main__":
         description=description, \
         author=author, \
         author_email = author_email, \
-        configuration = configuration, version="1.0.2",\
+        configuration = configuration, version="1.1.0",\
         packages=["prosail"])
