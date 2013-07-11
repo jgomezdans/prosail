@@ -1,9 +1,9 @@
 !    -*- f90 -*-
 ! Note: the context of this file is case sensitive.
 
-python module prosail_fortran ! in 
-    interface  ! in :prosail_fortran
-        module mod_dataspec_p5b ! in :prosail_fortran:dataSpec_P5B.f90
+python module PROSAIL ! in 
+    interface  ! in :PROSAIL
+        module mod_dataspec_p5b ! in :PROSAIL:dataSpec_P5B.f90
             real*8 dimension(2101) :: k_cm
             integer*4 :: i
             real*8 dimension(2101) :: ed
@@ -18,7 +18,7 @@ python module prosail_fortran ! in
             real*8 dimension(2101) :: es
             integer, parameter,optional :: nw=2101
         end module mod_dataspec_p5b
-        subroutine run_prosail(n,cab,car,cbrown,cw,cm,lai,lidfa,lidfb,psoil,hspot,tts,tto,psi,retval) ! in :prosail_fortran:run_prosail.f90
+        subroutine run_prosail(n,cab,car,cbrown,cw,cm,lai,lidfa,lidfb,rsoil,psoil,hspot,tts,tto,psi,typelidf,retval) ! in :PROSAIL:run_prosail.f90
             use mod_sail
             use mod_angle
             use mod_flag_util
@@ -34,14 +34,16 @@ python module prosail_fortran ! in
             real*8 intent(in) :: lai
             real*8 intent(in) :: lidfa
             real*8 intent(in) :: lidfb
+            real*8 intent(in) :: rsoil
             real*8 intent(in) :: psoil
             real*8 intent(in) :: hspot
             real*8 intent(in) :: tts
             real*8 intent(in) :: tto
             real*8 intent(in) :: psi
+            integer intent(in) :: typelidf
             real*8 dimension(2101),intent(out) :: retval
         end subroutine run_prosail
-        subroutine prospect_5b(n,cab,car,cbrown,cw,cm,rt) ! in :prosail_fortran:prospect_5B.f90
+        subroutine prospect_5b(n,cab,car,cbrown,cw,cm,rt) ! in :PROSAIL:prospect_5B.f90
             use mod_dataspec_p5b
             real*8 intent(in) :: n
             real*8 intent(in) :: cab
@@ -51,32 +53,32 @@ python module prosail_fortran ! in
             real*8 intent(in) :: cm
             real*8 dimension(2101,2),intent(out) :: rt
         end subroutine prospect_5b
-        subroutine dladgen(a,b,freq) ! in :prosail_fortran:dladgen.f
+        subroutine dladgen(a,b,freq) ! in :PROSAIL:dladgen.f
             real*8 :: a
             real*8 :: b
             real*8 dimension(13) :: freq
         end subroutine dladgen
-        function dcum(a,b,t) ! in :prosail_fortran:dladgen.f
+        function dcum(a,b,t) ! in :PROSAIL:dladgen.f
             real*8 :: a
             real*8 :: b
             real*8 :: t
             real*8 :: dcum
         end function dcum
-        subroutine campbell(n,ala,freq) ! in :prosail_fortran:LIDF.f90
+        subroutine campbell(n,ala,freq) ! in :PROSAIL:LIDF.f90
             integer*4, optional,check(len(freq)>=n),depend(freq) :: n=len(freq)
             real*8 :: ala
             real*8 dimension(n) :: freq
         end subroutine campbell
-        subroutine calc_lidf_ellipsoidal(na,alpha,freqvar) ! in :prosail_fortran:LIDF.f90
+        subroutine calc_lidf_ellipsoidal(na,alpha,freqvar) ! in :PROSAIL:LIDF.f90
             integer*4, optional,check(len(freqvar)>=na),depend(freqvar) :: na=len(freqvar)
             real*8 :: alpha
             real*8 dimension(na) :: freqvar
         end subroutine calc_lidf_ellipsoidal
-        module mod_angle ! in :prosail_fortran:MODULE_PRO4SAIL.f90
+        module mod_angle ! in :PROSAIL:MODULE_PRO4SAIL.f90
             real*8, save :: rd
             real*8, save :: pi
         end module mod_angle
-        module mod_staticvar ! in :prosail_fortran:MODULE_PRO4SAIL.f90
+        module mod_staticvar ! in :PROSAIL:MODULE_PRO4SAIL.f90
             real*8, save,allocatable,dimension(:) :: vb
             real*8, save :: sob
             real*8, save,allocatable,dimension(:) :: vf
@@ -104,12 +106,12 @@ python module prosail_fortran ! in
             real*8, save :: cto
             real*8, save :: ddf
         end module mod_staticvar
-        module mod_output_prospect ! in :prosail_fortran:MODULE_PRO4SAIL.f90
+        module mod_output_prospect ! in :PROSAIL:MODULE_PRO4SAIL.f90
             real*8, save,allocatable,dimension(:) :: tau
             real*8, save,allocatable,dimension(:,:) :: lrt
             real*8, save,allocatable,dimension(:) :: rho
         end module mod_output_prospect
-        module mod_flag_util ! in :prosail_fortran:MODULE_PRO4SAIL.f90
+        module mod_flag_util ! in :PROSAIL:MODULE_PRO4SAIL.f90
             real*8, save,allocatable,dimension(:) :: rsoil_old
             logical :: delta_soil
             logical :: delta_skyl
@@ -137,7 +139,7 @@ python module prosail_fortran ! in
             real*8, save :: car_old
             real*8, save :: lai_old
         end module mod_flag_util
-        module mod_sail ! in :prosail_fortran:MODULE_PRO4SAIL.f90
+        module mod_sail ! in :PROSAIL:MODULE_PRO4SAIL.f90
             real*8, save,allocatable,dimension(:) :: rso
             real*8, save,allocatable,dimension(:) :: tdo
             real*8, save,allocatable,dimension(:) :: rsd
@@ -158,7 +160,7 @@ python module prosail_fortran ! in
             real*8, save,allocatable,dimension(:) :: rdo
             real*8, save :: tss
         end module mod_sail
-        subroutine pro4sail(n,cab,car,cbrown,cw,cm,lidfa,lidfb,typelidf,lai,q,tts,tto,psi,rsoil) ! in :prosail_fortran:PRO4SAIL.f90
+        subroutine pro4sail(n,cab,car,cbrown,cw,cm,lidfa,lidfb,typelidf,lai,q,tts,tto,psi,rsoil) ! in :PROSAIL:PRO4SAIL.f90
             use mod_sail
             use mod_angle
             use mod_flag_util
@@ -181,34 +183,34 @@ python module prosail_fortran ! in
             real*8 intent(in) :: psi
             real*8 dimension(2101),intent(in) :: rsoil
         end subroutine pro4sail
-        subroutine jfunc1(k,l,t,jout) ! in :prosail_fortran:PRO4SAIL.f90
+        subroutine jfunc1(k,l,t,jout) ! in :PROSAIL:PRO4SAIL.f90
             use mod_dataspec_p5b
             real*8 intent(in) :: k
             real*8 dimension(2101),intent(in) :: l
             real*8 intent(in) :: t
             real*8 dimension(2101),intent(out) :: jout
         end subroutine jfunc1
-        subroutine jfunc2(k,l,t,jout) ! in :prosail_fortran:PRO4SAIL.f90
+        subroutine jfunc2(k,l,t,jout) ! in :PROSAIL:PRO4SAIL.f90
             use mod_dataspec_p5b
             real*8 intent(in) :: k
             real*8 dimension(2101),intent(in) :: l
             real*8 intent(in) :: t
             real*8 dimension(2101),intent(out) :: jout
         end subroutine jfunc2
-        function jfunc3(k,l,t) ! in :prosail_fortran:PRO4SAIL.f90
+        function jfunc3(k,l,t) ! in :PROSAIL:PRO4SAIL.f90
             use mod_dataspec_p5b
             real*8 :: k
             real*8 :: l
             real*8 :: t
             real*8 :: jfunc3
         end function jfunc3
-        subroutine tav_abs(theta,refr,res) ! in :prosail_fortran:tav_abs.f90
+        subroutine tav_abs(theta,refr,res) ! in :PROSAIL:tav_abs.f90
             use mod_dataspec_p5b
             real*8 intent(in) :: theta
             real*8 dimension(2101),intent(in) :: refr
             real*8 dimension(2101),intent(out) :: res
         end subroutine tav_abs
-        subroutine volscatt(tts,tto,psi,ttl,chi_s,chi_o,frho,ftau) ! in :prosail_fortran:volscatt.f90
+        subroutine volscatt(tts,tto,psi,ttl,chi_s,chi_o,frho,ftau) ! in :PROSAIL:volscatt.f90
             use mod_angle
             real*8 intent(in) :: tts
             real*8 intent(in) :: tto
@@ -220,7 +222,7 @@ python module prosail_fortran ! in
             real*8 intent(inout) :: ftau
         end subroutine volscatt
     end interface 
-end python module prosail_fortran
+end python module PROSAIL
 
 ! This file was auto-generated with f2py (version:2).
 ! See http://cens.ioc.ee/projects/f2py2e/

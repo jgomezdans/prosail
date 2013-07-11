@@ -17,10 +17,10 @@
     REAL*8, intent(in) :: lai,LIDFa,LIDFb,psoil,rsoil
     REAL*8, intent(in) :: hspot
     REAL*8, intent(in) :: tts,tto,psi
-    
+    INTEGER, intent(in) :: TypeLidf   
     REAL*8,ALLOCATABLE,SAVE :: resh(:),resv(:)
     REAL*8,ALLOCATABLE,SAVE :: rsoil0(:),PARdiro(:),PARdifo(:)
-    INTEGER :: TypeLidf,ii
+    INTEGER :: ii
     REAL*8 :: ihot, skyl
     ! ANGLE CONVERSION
     pi=3.151592d0
