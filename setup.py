@@ -16,6 +16,7 @@ if __name__ == "__main__":
     # Global variables for this extension:
     name         = "prosail_fortran"  # name of the generated python extension (.so)
     description  = "PRO4SAIL python wrappers"
+    long_description = "The PROSPECT + SAILh radiative transfer models from Python."
     author       = "J Gomez-Dans/NCEO & University College London"
     author_email = "j.gomez-dans@ucl.ac.uk"
     url = "http://github.com/jgomezdans/prosail"
