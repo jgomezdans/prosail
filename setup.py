@@ -18,10 +18,11 @@ if __name__ == "__main__":
     description  = "PRO4SAIL python wrappers"
     author       = "J Gomez-Dans/NCEO & University College London"
     author_email = "j.gomez-dans@ucl.ac.uk"
+    url = "http://github.com/jgomezdans/prosail"
     
     setup( name=name,\
         description=description, \
         author=author, \
         author_email = author_email, \
-        configuration = configuration, version="1.1.0",\
+        configuration = configuration, url = url, version="1.1.0",\
         packages=["prosail"])
