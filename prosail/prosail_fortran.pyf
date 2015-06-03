@@ -18,7 +18,7 @@ python module prosail_fortran ! in
             real*8 dimension(2101) :: es
             integer, parameter,optional :: nw=2101
         end module mod_dataspec_p5b
-        subroutine run_prosail(n,cab,car,cbrown,cw,cm,lai,lidfa,lidfb,rsoil,psoil,hspot,tts,tto,psi,typelidf,retval) ! in :prosail_fortran:run_prosail.f90
+        subroutine run_prosail(n,cab,car,cbrown,cw,cm,lai,lidfa,lidfb,rsoil,psoil,hspot,tts,tto,psi,typelidf,retval, soil_spectrum1, soil_spectrum2) ! in :prosail_fortran:run_prosail.f90
             use mod_sail
             use mod_angle
             use mod_flag_util
@@ -41,6 +41,8 @@ python module prosail_fortran ! in
             real*8 intent(in) :: tto
             real*8 intent(in) :: psi
             integer intent(in) :: typelidf
+            real*8, dimension(2101), intent(in), optional :: soil_spectrum1
+            real*8, dimension(2101), intent(in), optional :: soil_spectrum2
             real*8 dimension(2101),intent(out) :: retval
         end subroutine run_prosail
         subroutine prospect_5b(n,cab,car,cbrown,cw,cm,rt) ! in :prosail_fortran:prospect_5B.f90
