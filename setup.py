@@ -14,7 +14,7 @@ def configuration(parent_package='',top_path=None):
 if __name__ == "__main__":
     from numpy.distutils.core import setup
     # Global variables for this extension:
-    name         = "prosail_fortran"  # name of the generated python extension (.so)
+    name         = "prosail"  # name of the generated python extension (.so)
     description  = "PRO4SAIL python wrappers"
     long_description = "The PROSPECT + SAILh radiative transfer models from Python."
     author       = "J Gomez-Dans/NCEO & University College London"
