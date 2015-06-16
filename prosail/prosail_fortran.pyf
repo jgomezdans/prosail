@@ -18,52 +18,6 @@ python module prosail_fortran ! in
             real*8 dimension(2101) :: es
             integer, parameter,optional :: nw=2101
         end module mod_dataspec_p5b
-        subroutine run_prosail(n,cab,car,cbrown,cw,cm,lai,lidfa,lidfb,rsoil,psoil,hspot,tts,tto,psi,typelidf,retval) ! in :prosail_fortran:run_prosail.f90
-            use mod_sail
-            use mod_angle
-            use mod_flag_util
-            use mod_dataspec_p5b
-            use mod_output_prospect
-            use mod_staticvar
-            real*8 intent(in) :: n
-            real*8 intent(in) :: cab
-            real*8 intent(in) :: car
-            real*8 intent(in) :: cbrown
-            real*8 intent(in) :: cw
-            real*8 intent(in) :: cm
-            real*8 intent(in) :: lai
-            real*8 intent(in) :: lidfa
-            real*8 intent(in) :: lidfb
-            real*8 intent(in) :: rsoil
-            real*8 intent(in) :: psoil
-            real*8 intent(in) :: hspot
-            real*8 intent(in) :: tts
-            real*8 intent(in) :: tto
-            real*8 intent(in) :: psi
-            integer intent(in) :: typelidf
-            real*8 dimension(2101),intent(out) :: retval
-        end subroutine run_prosail
-        subroutine prospect_5b(n,cab,car,cbrown,cw,cm,rt) ! in :prosail_fortran:prospect_5B.f90
-            use mod_dataspec_p5b
-            real*8 intent(in) :: n
-            real*8 intent(in) :: cab
-            real*8 intent(in) :: car
-            real*8 intent(in) :: cbrown
-            real*8 intent(in) :: cw
-            real*8 intent(in) :: cm
-            real*8 dimension(2101,2),intent(out) :: rt
-        end subroutine prospect_5b
-        subroutine dladgen(a,b,freq) ! in :prosail_fortran:dladgen.f
-            real*8 :: a
-            real*8 :: b
-            real*8 dimension(13) :: freq
-        end subroutine dladgen
-        function dcum(a,b,t) ! in :prosail_fortran:dladgen.f
-            real*8 :: a
-            real*8 :: b
-            real*8 :: t
-            real*8 :: dcum
-        end function dcum
         subroutine campbell(n,ala,freq) ! in :prosail_fortran:LIDF.f90
             integer*4, optional,check(len(freq)>=n),depend(freq) :: n=len(freq)
             real*8 :: ala
@@ -160,6 +114,24 @@ python module prosail_fortran ! in
             real*8, save,allocatable,dimension(:) :: rdo
             real*8, save :: tss
         end module mod_sail
+        subroutine sail(rho,tau,lidfa,lidfb,typelidf,lai,q,tts,tto,psi,rsoil) ! in :prosail_fortran:PRO4SAIL.f90
+            use mod_sail
+            use mod_staticvar
+            use mod_dataspec_p5b
+            use mod_angle
+            use mod_flag_util
+            real*8 dimension(2101),intent(in) :: rho
+            real*8 dimension(2101),intent(in) :: tau
+            real*8 intent(in) :: lidfa
+            real*8 intent(in) :: lidfb
+            integer*4 intent(in) :: typelidf
+            real*8 intent(in) :: lai
+            real*8 intent(in) :: q
+            real*8 intent(in) :: tts
+            real*8 intent(in) :: tto
+            real*8 intent(in) :: psi
+            real*8 dimension(2101),intent(in) :: rsoil
+        end subroutine sail
         subroutine pro4sail(n,cab,car,cbrown,cw,cm,lidfa,lidfb,typelidf,lai,q,tts,tto,psi,rsoil) ! in :prosail_fortran:PRO4SAIL.f90
             use mod_sail
             use mod_angle
@@ -204,6 +176,62 @@ python module prosail_fortran ! in
             real*8 :: t
             real*8 :: jfunc3
         end function jfunc3
+        subroutine prospect_5b(n,cab,car,cbrown,cw,cm,rt) ! in :prosail_fortran:prospect_5B.f90
+            use mod_dataspec_p5b
+            real*8 intent(in) :: n
+            real*8 intent(in) :: cab
+            real*8 intent(in) :: car
+            real*8 intent(in) :: cbrown
+            real*8 intent(in) :: cw
+            real*8 intent(in) :: cm
+            real*8 dimension(2101,2),intent(out) :: rt
+        end subroutine prospect_5b
+        subroutine run_prosail(n,cab,car,cbrown,cw,cm,lai,lidfa,lidfb,rsoil,psoil,hspot,tts,tto,psi,typelidf,retval) ! in :prosail_fortran:run_prosail.f90
+            use mod_sail
+            use mod_angle
+            use mod_flag_util
+            use mod_dataspec_p5b
+            use mod_output_prospect
+            use mod_staticvar
+            real*8 intent(in) :: n
+            real*8 intent(in) :: cab
+            real*8 intent(in) :: car
+            real*8 intent(in) :: cbrown
+            real*8 intent(in) :: cw
+            real*8 intent(in) :: cm
+            real*8 intent(in) :: lai
+            real*8 intent(in) :: lidfa
+            real*8 intent(in) :: lidfb
+            real*8 intent(in) :: rsoil
+            real*8 intent(in) :: psoil
+            real*8 intent(in) :: hspot
+            real*8 intent(in) :: tts
+            real*8 intent(in) :: tto
+            real*8 intent(in) :: psi
+            integer intent(in) :: typelidf
+            real*8 dimension(2101),intent(out) :: retval
+        end subroutine run_prosail
+        subroutine run_sail(refl,trans,lai,lidfa,lidfb,rsoil,psoil,hspot,tts,tto,psi,typelidf,retval) ! in :prosail_fortran:run_prosail.f90
+            use mod_sail
+            use mod_angle
+            use mod_flag_util
+            use mod_dataspec_p5b
+            use mod_output_prospect
+            use mod_staticvar
+            real*8 dimension(2101),intent(in) :: refl
+            real*8 dimension(2101),intent(in) :: trans
+            real*8 intent(in) :: lai
+            real*8 intent(in) :: lidfa
+            real*8 intent(in) :: lidfb
+            real*8 intent(in) :: rsoil
+            real*8 intent(in) :: psoil
+            real*8 intent(in) :: hspot
+            real*8 intent(in) :: tts
+            real*8 intent(in) :: tto
+            real*8 intent(in) :: psi
+            integer intent(in) :: typelidf
+            real*8 dimension(2101),intent(out) :: retval
+        end subroutine run_sail
         subroutine tav_abs(theta,refr,res) ! in :prosail_fortran:tav_abs.f90
             use mod_dataspec_p5b
             real*8 intent(in) :: theta
@@ -221,6 +249,17 @@ python module prosail_fortran ! in
             real*8 intent(inout) :: frho
             real*8 intent(inout) :: ftau
         end subroutine volscatt
+        subroutine dladgen(a,b,freq) ! in :prosail_fortran:dladgen.f
+            real*8 :: a
+            real*8 :: b
+            real*8 dimension(13) :: freq
+        end subroutine dladgen
+        function dcum(a,b,t) ! in :prosail_fortran:dladgen.f
+            real*8 :: a
+            real*8 :: b
+            real*8 :: t
+            real*8 :: dcum
+        end function dcum
     end interface 
 end python module prosail_fortran
 
