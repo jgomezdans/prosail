@@ -80,21 +80,14 @@ The parameter ``typelidf`` regulates the leaf angle distribution family being us
 * ``typelidf = 1``: use the two parameter LAD parameterisation, where ``a`` and ``b`` control the average leaf slope and the distribution bimodality, respectively. Typical distributions
 are given by the following parameter  choices:
 
-+--------------+-----------+------------------+
 | LIDF type    | ``LIDFa`` |  ``LIDFb``       |
-+==============+===========+==================+
+|--------------|-----------|------------------|
 | Planophile   |    1      |  0               |
-+--------------+-----------+------------------+
 |   Erectophile|    -1     |   0              |
-+--------------+-----------+------------------+
 |   Plagiophile|     0     |  -1              |
-+--------------+-----------+------------------+
 |  Extremophile|    0      |  1               |
-+--------------+-----------+------------------+
 |   Spherical  |    -0.35  |  -0.15           |
-+--------------+-----------+------------------+
 |   Uniform    |     0     |   0              |
-+--------------+-----------+------------------+
 
 * ``typelidf = 2`` Ellipsoidal distribution, where ``LIDFa`` parameter stands for mean leaf angle (0 degrees is planophile, 90 degrees is erectophile). ``LIDFb`` parameter is ignored.
    
@@ -102,9 +95,8 @@ are given by the following parameter  choices:
 
 The soil model is a fairly simple linear mixture model, where two spectra are mixed and then a brightness term added:
 
-$$
-\rho_{soil} = rsoil*(psoil*soil_spectrum1+(1-psoil)*soil_spectrum2)
-$$
+    rho_soil = rsoil*(psoil*soil_spectrum1+(1-psoil)*soil_spectrum2)
+
 
 The idea is that one of the spectra is a dry soil and the other a wet soil, so soil moisture is then contorlled by ``psoil``. ``rsoil`` is just a brightness scaling term.
 
