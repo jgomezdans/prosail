@@ -7,7 +7,7 @@
 
 ---
 
-# PROSAIL
+# PROSAIL Python Bindings
 
 #### J Gomez-Dans (NCEO & UCL) ``j.gomez-dans@ucl.ac.uk``
 
