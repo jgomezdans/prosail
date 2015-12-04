@@ -1,8 +1,11 @@
-PROSAIL
-==========
+<img src="http://www.nceo.ac.uk/images/NCEO_logo_lrg.jpg" scale=50% alt="NCEO logo" align="right" />
+<img src="http://www.esa.int/esalogo/images/logotype/img_colorlogo_darkblue.gif" scale=20% alt="ESA logo" align="left" />
 
-Description
---------------
+# PROSAIL
+#### J Gomez-Dans (NCEO & UCL) ``j.gomez-dans@ucl.ac.uk``
+
+
+## Description
 
 This repository contains the Python bindings to the PROSPECT and SAIL leaf and 
 canopy reflectance models. The code is written in FORTRAN. The original fortran
@@ -12,8 +15,7 @@ that page to get newer versions of the code. A recent review of the use of both
 models is availabe in `this paper <http://webdocs.dow.wur.nl/internet/grs/Workshops/Environmental_Applications_Imaging_Spectroscopy/12_Jacquemoud_Prospect/IEEE_Jacquemoud_PROSPECT.pdf>`_.
 
 
-Installing the bindings
--------------------------
+## Installing the bindings
 
 The installation of the bindings is quite straightforward: unpack the distribution
 and run the following command   
@@ -25,39 +27,43 @@ privileges) by
 
     python setup.py install --user
     
-Note
-*******
+<div class="alert">Note
+
     
 You will need a working FORTRAN compiler. I have only tested this with GCC on Linux, but it should work on other systems. You can also pass optimisation flags to the compiler: 
     
     python setup.py config_fc  --fcompiler=gnu95   --arch=-march=native --opt=-O3  install --user
+</div>
     
-    
-Using the bindings
----------------------
+## Using the bindings
 
-The bindings offer a single function, ``run_prosail``.
+The bindings offer several functions, which will be described in detail below:.
 
-    retval = run_prosail(n,cab,car,cbrown,cw,cm,lai,lidfa,lidfb,psoil,hspot,tts,tto,psi)
-    
-The parameters that are fed into ``run_prosail`` are
+* ``run_prospect``: This function runs the PROSPECT 5B model in Feret et al 2008. The input parameters are the usual ``(n,cab,car,cbrown,cw,cm)`` (e.g. leaf layers, leaf Chlorophyll concentration, leaf Carotenoid concentration, leaf senescent fraction, Equivalent leaf water, leaf dry matter). It returns a spectrum between 400 and 2500 nm.
+* ``run_sail``:  The SAILh model, which in this case requires leaf reflectance and transmittance to be fed to the model (e.g. you have already measured these spectra in the field). The rest of the parameters are ``(refl,trans,lai,lidfa,lidfb,rsoil,psoil,hspot,tts,tto,psi,typelidf)``. Additionally, there are two optional parameters, ``soil_spectrum1``, ``soil_spectrum2``, which allow you to set the soil spectra (otherwise, some default spectra get used). Output is a spectrum in the 400-2500 nm range.
+* ``run_prosail``: PROSPECT_5B and SAILh coupled together, with input parameters given by ``(n,cab,car,cbrown,cw,cm,lai,lidfa,lidfb,rsoil,psoil,hspot,tts,tto,psi,typelidf)``. Output is a spectrum in the 400-2500 nm range.
+
+
+## The parameters
+
+The parameters used by the models and their units are introduced below:
 
 +-------------+---------------------------------+--------------+------------+-------------+
 | Parameter   | Description of parameter        | Units        |Typical min | Typical max |
 +=============+=================================+==============+============+=============+
 |   N         | Leaf structure parameter        | N/A          | 0.8        | 2.5         |
 +-------------+---------------------------------+--------------+------------+-------------+
-|  cab        | Chlorophyll a+b concentration   | ug/cm2       | 0          | 200         |
+|  cab        | Chlorophyll a+b concentration   | ug/cm2       | 0          | 80          |
 +-------------+---------------------------------+--------------+------------+-------------+
 |  caw        | Equivalent water thickiness     | cm           | 0          | 200         |
 +-------------+---------------------------------+--------------+------------+-------------+
-|  car        | Carotenoid concentration        | ug/cm2       | 0          | 200         |
+|  car        | Carotenoid concentration        | ug/cm2       | 0          | 20          |
 +-------------+---------------------------------+--------------+------------+-------------+
 |  cbrown     | Brown pigment                   | NA           | 0          | 1           |
 +-------------+---------------------------------+--------------+------------+-------------+
 |  cm         | Dry matter content              | g/cm2        | 0          | 200         |
 +-------------+---------------------------------+--------------+------------+-------------+
-|  lai        | Leaf Area Index                 | N/A          | 0.1        | 10          |
+|  lai        | Leaf Area Index                 | N/A          | 0          | 10          |
 +-------------+---------------------------------+--------------+------------+-------------+
 |  lidfa      | Leaf angle distribution         | N/A          | -          | -           |
 +-------------+---------------------------------+--------------+------------+-------------+
@@ -65,7 +71,9 @@ The parameters that are fed into ``run_prosail`` are
 +-------------+---------------------------------+--------------+------------+-------------+
 |  psoil      | Dry/Wet soil factor             | N/A          | 0          | 1           |
 +-------------+---------------------------------+--------------+------------+-------------+
-|  hspot      | Hotspot parameter               | N/A          | 0          | 0.          |
+|  rsoil      | Soil brigthness factor          | N/A          | -          | -           |
++-------------+---------------------------------+--------------+------------+-------------+
+|  hspot      | Hotspot parameter               | N/A          | -          | -           |
 +-------------+---------------------------------+--------------+------------+-------------+
 |  tts        | Solar zenith angle              | deg          | 0          | 90          |
 +-------------+---------------------------------+--------------+------------+-------------+
@@ -73,14 +81,20 @@ The parameters that are fed into ``run_prosail`` are
 +-------------+---------------------------------+--------------+------------+-------------+
 |  phi        | Relative azimuth angle          | deg          | 0          | 360         |
 +-------------+---------------------------------+--------------+------------+-------------+
+| typelidf    | Leaf angle distribution type    | Integer      | -          | -           |
++-------------+---------------------------------+--------------+------------+-------------+
 
-``lidfa`` and ``lidfb`` parameters control the leaf angle distribution. Typical distributions
+### Specifying the leaf angle distribution
+
+The parameter ``typelidf`` regulates the leaf angle distribution family being used. The following options are understood:
+
+* ``typelidf = 1``: use the two parameter LAD parameterisation, where ``a`` and ``b`` control the average leaf slope and the distribution bimodality, respectively. Typical distributions
 are given by the following parameter  choices:
 
 +--------------+-----------+------------------+
-|LIDF type     |  lidfa    |    lidfb         |
+| LIDF type    | ``LIDFa`` |  ``LIDFb``       |
 +==============+===========+==================+
-|Planophile    |    1      |  b               |
+| Planophile   |    1      |  0               |
 +--------------+-----------+------------------+
 |   Erectophile|    -1     |   0              |
 +--------------+-----------+------------------+
@@ -92,28 +106,17 @@ are given by the following parameter  choices:
 +--------------+-----------+------------------+
 |   Uniform    |     0     |   0              |
 +--------------+-----------+------------------+
+
+* ``typelidf = 2`` Ellipsoidal distribution, where ``LIDFa`` parameter stands for mean leaf angle (0 degrees is planophile, 90 degrees is erectophile). ``LIDFb`` parameter is ignored.
    
-   
-    
+### The soil model
 
-A simple example of using bindings would be
+The soil model is a fairly simple linear mixture model, where two spectra are mixed and then a brightness term added:
 
- cm=0.009
- cab = 80
- car = 15
- cbrown = 0
- cw = 0.001
- lidfa = 0
- lidfb = 0
- psoil = 0
- hspot = 0.01
- tts = 30
- tto = 10
- phi = 0
- lai = np.arange ( 0, 5, 0.2 )
- for l in lai:
-    plt.plot ( run_prosail(1.5,cab,car,cbrown,cw,cm,l,lidfa,lidfb,psoil,hspot,tts,tto,psi))
-    
-This results in a simulation of surface reflectance (from 400 to 2500 nm) as a function of LAI and under the other parameters' prescribed values. This yields the following
+$$
+\rho_{soil} = rsoil*(psoil*soil_spectrum1+(1-psoil)*soil_spectrum2)
+$$
 
-.. image:: http://i.imgur.com/2Hh0z.png
+The idea is that one of the spectra is a dry soil and the other a wet soil, so soil moisture is then contorlled by ``psoil``. ``rsoil`` is just a brightness scaling term.
+
+
