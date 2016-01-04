@@ -1,7 +1,7 @@
 
     SUBROUTINE run_prosail ( N, Cab, Car, Cbrown, Cw, Cm, lai, LIDFa, LIDFb, &
-                rsoil, psoil, hspot, tts, tto, psi, TypeLidf, retval, &
-                soil_spectrum1, soil_spectrum2 )
+                rsoil, psoil, hspot, tts, tto, psi, TypeLidf, &
+                soil_spectrum1, soil_spectrum2, retval )
 
     USE MOD_ANGLE               ! defines pi & rad conversion
     USE MOD_staticvar           ! static variables kept in memory for optimization
