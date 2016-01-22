@@ -21,8 +21,9 @@
     INTEGER, intent(in) :: TypeLidf   
     REAL*8,ALLOCATABLE,SAVE :: resh(:),resv(:)
     REAL*8,ALLOCATABLE,SAVE :: rsoil0(:),PARdiro(:),PARdifo(:)
-    REAL*8, dimension(nw), intent(in), optional :: soil_spectrum1
-    REAL*8, dimension(nw), intent(in), optional :: soil_spectrum2
+    REAL*8, dimension(nw), intent(in) :: soil_spectrum1 
+    REAL*8, dimension(nw), intent(in) :: soil_spectrum2 
+    
     INTEGER :: ii
     REAL*8 :: ihot, skyl
     ! ANGLE CONVERSION
@@ -85,13 +86,11 @@
         ALLOCATE (rsoil0(nw))
         !psoil   =   1.      ! soil factor (psoil=0: wet soil / psoil=1: dry soil)
         ! rsoil : soil brightness  term
-        if ( present(soil_spectrum1) ) then
-            Rsoil1 = soil_spectrum1
-        endif
-        if ( present ( soil_spectrum2 ) ) then
-            Rsoil2 = soil_spectrum2
-        endif
-        rsoil0=rsoil*(psoil*Rsoil1+(1-psoil)*Rsoil2)
+        
+        
+
+        rsoil0=rsoil*(psoil*soil_spectrum1+(1-psoil)*soil_spectrum2)
+
 
     !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     !!  4SAIL canopy structure parm !!
@@ -168,8 +167,9 @@
     INTEGER, intent(in) :: TypeLidf   
     REAL*8,ALLOCATABLE,SAVE :: resh(:),resv(:)
     REAL*8,ALLOCATABLE,SAVE :: rsoil0(:),PARdiro(:),PARdifo(:)
-    REAL*8, dimension(nw), intent(in), optional :: soil_spectrum1
-    REAL*8, dimension(nw), intent(in), optional :: soil_spectrum2
+    REAL*8, dimension(nw), intent(in) :: soil_spectrum1
+    REAL*8, dimension(nw), intent(in) :: soil_spectrum2
+
     INTEGER :: ii
     REAL*8 :: ihot, skyl
     ! ANGLE CONVERSION
@@ -232,14 +232,8 @@
         ALLOCATE (rsoil0(nw))
         !psoil   =   1.      ! soil factor (psoil=0: wet soil / psoil=1: dry soil)
         ! rsoil : soil brightness  term
-        if ( present(soil_spectrum1) ) then
-            Rsoil1 = soil_spectrum1
-        endif
-        if ( present ( soil_spectrum2 ) ) then
-            Rsoil2 = soil_spectrum2
-        endif
 
-        rsoil0=rsoil*(psoil*Rsoil1+(1-psoil)*Rsoil2)
+        rsoil0=rsoil*(psoil*soil_spectrum1+(1-psoil)*soil_spectrum2)
 
     !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     !!  4SAIL canopy structure parm !!
