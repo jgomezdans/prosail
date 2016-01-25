@@ -12,18 +12,38 @@ def configuration(parent_package='',top_path=None):
     return config
 
 if __name__ == "__main__":
+    import os
     from numpy.distutils.core import setup
     # Global variables for this extension:
     name         = "prosail"  # name of the generated python extension (.so)
-    description  = "PRO4SAIL python wrappers"
+    description  = "PROSPECT, SAIL and PROSIAL Python wrappers"
     long_description = "The PROSPECT + SAILh radiative transfer models from Python."
+    if os.exists ( "README.txt" ):
+        long_description = open( "README.txt", 'r').read()
+    
     author       = "J Gomez-Dans/NCEO & University College London"
     author_email = "j.gomez-dans@ucl.ac.uk"
     url = "http://github.com/jgomezdans/prosail"
-    
-    setup( name=name,\
-        description=description, \
-        author=author, \
-        author_email = author_email, \
-        configuration = configuration, version="1.1.5",\
+    classifiers=[
+	'Development Status :: 5 - Stable',
+        'Natural Language :: English',
+        'Operating System :: OS Independent',
+        'Programming Language :: Python :: 2',
+        'Topic :: Scientific/Engineering',
+        'Topic :: Software Development :: Libraries :: Python Modules',
+        "Topic :: Scientific/Engineering :: Atmospheric Science",
+        "Topic :: Scientific/Engineering :: Physics",
+        "Topic :: Scientific/Engineering :: GIS",
+        'Intended Audience :: Science/Research',
+        'Intended Audience :: End Users/Desktop',
+        'Intended Audience :: Developers',
+        'Environment :: Console']
+    setup( name=name,
+        description=description, 
+        long_description=long_description,
+        author=author, 
+        author_email = author_email, 
+        classifiers = classifiers,
+        configuration = configuration, 
+        version="1.1.6",
         packages=["prosail"])
