@@ -18,14 +18,14 @@ if __name__ == "__main__":
     name         = "prosail"  # name of the generated python extension (.so)
     description  = "PROSPECT, SAIL and PROSIAL Python wrappers"
     long_description = "The PROSPECT + SAILh radiative transfer models from Python."
-    if os.exists ( "README.txt" ):
+    if os.path.exists ( "README.txt" ):
         long_description = open( "README.txt", 'r').read()
     
     author       = "J Gomez-Dans/NCEO & University College London"
     author_email = "j.gomez-dans@ucl.ac.uk"
     url = "http://github.com/jgomezdans/prosail"
     classifiers=[
-	'Development Status :: 5 - Stable',
+	'Development Status :: 5 - Production/Stable',
         'Natural Language :: English',
         'Operating System :: OS Independent',
         'Programming Language :: Python :: 2',
@@ -42,6 +42,7 @@ if __name__ == "__main__":
         description=description, 
         long_description=long_description,
         author=author, 
+	url=url,
         author_email = author_email, 
         classifiers = classifiers,
         configuration = configuration, 
