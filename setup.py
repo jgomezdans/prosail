@@ -16,7 +16,7 @@ if __name__ == "__main__":
     from numpy.distutils.core import setup
     # Global variables for this extension:
     name         = "prosail"  # name of the generated python extension (.so)
-    description  = "PROSPECT, SAIL and PROSIAL Python wrappers"
+    description  = "PROSPECT, SAIL and PROSAIL Python wrappers"
     long_description = "The PROSPECT + SAILh radiative transfer models from Python."
     if os.path.exists ( "README.txt" ):
         long_description = open( "README.txt", 'r').read()
@@ -46,5 +46,5 @@ if __name__ == "__main__":
         author_email = author_email, 
         classifiers = classifiers,
         configuration = configuration, 
-        version="1.1.7",
+        version="1.2.0",
         packages=["prosail"])
