@@ -67,7 +67,7 @@ def run_prosail (n,cab,car,cbrown,cw,cm,lai,lidfa,lidfb,rsoil,psoil,hspot,
     if soil_spectrum2 is not None:
         assert ( len(soil_spectrum1) == 2101 )
     else:
-        soil_spectrum2 = spectral_libs.rsoil1
+        soil_spectrum2 = spectral_libs.rsoil2
 
     rho = prosail (n,cab,car,cbrown,cw,cm,lai,lidfa,lidfb,rsoil,psoil,hspot,
                  tts,tto,psi,typelidf, soil_spectrum1, soil_spectrum2 )
@@ -130,7 +130,7 @@ def run_sail (refl,trans,lai,lidfa,lidfb,rsoil,psoil,hspot,tts,tto,psi,typelidf,
     if soil_spectrum2 is not None:
         assert ( len(soil_spectrum1) == 2101 )
     else:
-        soil_spectrum2 = spectral_libs.rsoil1
+        soil_spectrum2 = spectral_libs.rsoil2
 
     rho = sail (refl,trans,lai,lidfa,lidfb,rsoil,psoil,hspot,tts,tto,psi,typelidf, 
                 soil_spectrum1, soil_spectrum2 )
