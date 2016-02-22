@@ -46,5 +46,5 @@ if __name__ == "__main__":
         author_email = author_email, 
         classifiers = classifiers,
         configuration = configuration, 
-        version="1.2.0",
+        version="1.2.1",
         packages=["prosail"])
