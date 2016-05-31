@@ -1,4 +1,4 @@
-<img src="http://www.nceo.ac.uk/images/NCEO_logo_lrg.jpg" scale=50% alt="NCEO logo" align="right" />
+<img src="https://www.nceo.ac.uk/wp-content/themes/nceo/assets/images//logos/img_logo_white.svg" scale=50% alt="NCEO logo" align="right" />
 <img src="http://www.esa.int/esalogo/images/logotype/img_colorlogo_darkblue.gif" scale=20% alt="ESA logo" align="left" />
 
 <br/>
