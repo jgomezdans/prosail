@@ -20,7 +20,7 @@ if __name__ == "__main__":
     long_description = "The PROSPECT + SAILh radiative transfer models from Python."
     if os.path.exists ( "README.txt" ):
         long_description = open( "README.txt", 'r').read()
-    
+
     author       = "J Gomez-Dans/NCEO & University College London"
     author_email = "j.gomez-dans@ucl.ac.uk"
     url = "http://github.com/jgomezdans/prosail"
@@ -39,12 +39,12 @@ if __name__ == "__main__":
         'Intended Audience :: Developers',
         'Environment :: Console']
     setup( name=name,
-        description=description, 
+        description=description,
         long_description=long_description,
-        author=author, 
+        author=author,
 	url=url,
-        author_email = author_email, 
+        author_email = author_email,
         classifiers = classifiers,
-        configuration = configuration, 
-        version="1.2.1",
+        configuration = configuration,
+        version="1.2.3",
         packages=["prosail"])
