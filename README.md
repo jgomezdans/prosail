@@ -11,6 +11,7 @@
 
 #### J Gomez-Dans (NCEO & UCL) ``j.gomez-dans@ucl.ac.uk``
 
+[![DOI](https://zenodo.org/badge/19469/jgomezdans/prosail.svg)](https://zenodo.org/badge/latestdoi/19469/jgomezdans/prosail)
 
 ## Description
 
