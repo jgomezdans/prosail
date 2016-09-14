@@ -1,7 +1,6 @@
 
-    SUBROUTINE run_prosail ( N, Cab, Car, Cbrown, Cw, Cm, lai, LIDFa, LIDFb, &
-                rsoil, psoil, hspot, tts, tto, psi, TypeLidf, &
-                soil_spectrum1, soil_spectrum2, retval )
+    SUBROUTINE run_prosailf ( N, Cab, Car, Cbrown, Cw, Cm, lai, LIDFa, LIDFb, &
+                rsoil0, hspot, tts, tto, psi, TypeLidf, retval )
 
     USE MOD_ANGLE               ! defines pi & rad conversion
     USE MOD_staticvar           ! static variables kept in memory for optimization
@@ -12,17 +11,18 @@
     IMPLICIT NONE
 
     ! LEAF BIOCHEMISTRY
-    REAL*8, dimension(nw), intent(out) :: retval
+    REAL*8, dimension(4,nw), intent(out) :: retval
     REAL*8, intent(in) :: N,Cab,Car,Cbrown,Cw,Cm
     ! CANOPY
-    REAL*8, intent(in) :: lai,LIDFa,LIDFb,psoil,rsoil
+    REAL*8, intent(in) :: lai,LIDFa,LIDFb
     REAL*8, intent(in) :: hspot
     REAL*8, intent(in) :: tts,tto,psi
+    REAL*8, intent(in),dimension(nw) :: rsoil0
     INTEGER, intent(in) :: TypeLidf   
     REAL*8,ALLOCATABLE,SAVE :: resh(:),resv(:)
-    REAL*8,ALLOCATABLE,SAVE :: rsoil0(:),PARdiro(:),PARdifo(:)
-    REAL*8, dimension(nw), intent(in) :: soil_spectrum1 
-    REAL*8, dimension(nw), intent(in) :: soil_spectrum2 
+    REAL*8,ALLOCATABLE,SAVE :: PARdiro(:),PARdifo(:)
+    !REAL*8, dimension(nw), intent(in) :: soil_spectrum1 
+    !REAL*8, dimension(nw), intent(in) :: soil_spectrum2 
     
     INTEGER :: ii
     REAL*8 :: ihot, skyl
@@ -42,7 +42,7 @@
     ! resh : hemispherical reflectance
     ! resv : directional reflectance
     ALLOCATE (resh(nw),resv(nw))
-    ALLOCATE (rsoil_old(nw))
+    !ALLOCATE (rsoil_old(nw))
 
         !TypeLidf=1
         ! if 2-parameters LIDF: TypeLidf=1
@@ -83,13 +83,13 @@
     !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         ! rsoil1 = dry soil
         ! rsoil2 = wet soil
-        ALLOCATE (rsoil0(nw))
+        !ALLOCATE (rsoil0(nw))
         !psoil   =   1.      ! soil factor (psoil=0: wet soil / psoil=1: dry soil)
         ! rsoil : soil brightness  term
         
         
 
-        rsoil0=rsoil*(psoil*soil_spectrum1+(1-psoil)*soil_spectrum2)
+        !rsoil0=rsoil*(psoil*soil_spectrum1+(1-psoil)*soil_spectrum2)
 
 
     !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -106,7 +106,8 @@
     !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     !!        CALL PRO4SAIL         !!
     !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        CALL PRO4SAIL(N,Cab,Car,Cbrown,Cw,Cm,LIDFa,LIDFb,TypeLIDF,LAI,hspot,tts,tto,psi,rsoil0)
+        CALL PRO4SAIL(N,Cab,Car,Cbrown,Cw,Cm,LIDFa,LIDFb,TypeLIDF,LAI,hspot, &
+    &   tts,tto,psi,rsoil0)
 
     !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     !!  direct / diffuse light  !!
@@ -125,7 +126,11 @@
         ! resv : directional reflectance
         
         !retval = (rdot*PARdifo+rsot*PARdiro)/(PARdiro+PARdifo)
-        retval = rsot
+        !retval = rsot
+        retval(1, :) = rsot !  bi-directional reflectance factor
+        retval(2, :) = rddt ! bi-hemispherical reflectance factor
+        retval(3, :) = rsdt ! directional-hemispherical (illumination direction)
+        retval(4, :) = rdot ! hemispherical-directional (view direction)
         deallocate ( lrt )
         deallocate ( rho )
         deallocate ( tau )
@@ -138,16 +143,15 @@
         ! resh : hemispherical reflectance
         ! resv : directional reflectance
         deALLOCATE (resh,resv)
-        deALLOCATE (rsoil_old)
-        deALLOCATE (rsoil0)
+        !deALLOCATE (rsoil_old)
+        !deALLOCATE (rsoil0)
         !WRITE( *,'(i4,f10.6)') (lambda(ii),run_prosail(ii), ii=1,nw)
-    END subroutine run_prosail
+    END subroutine run_prosailf
     
 
     
-    SUBROUTINE run_sail ( refl, trans, lai, LIDFa, LIDFb, &
-               rsoil, psoil, hspot, tts, tto, psi, TypeLidf, retval, &
-               soil_spectrum1, soil_spectrum2 )
+    SUBROUTINE run_sailf ( refl, trans, lai, LIDFa, LIDFb, &
+               rsoil0, hspot, tts, tto, psi, TypeLidf, retval )
 
     USE MOD_ANGLE               ! defines pi & rad conversion
     USE MOD_staticvar           ! static variables kept in memory for optimization
@@ -158,17 +162,19 @@
     IMPLICIT NONE
 
     ! LEAF BIOCHEMISTRY
-    REAL*8, dimension(nw), intent(out) :: retval
+    REAL*8, dimension(4,nw), intent(out) :: retval
     REAL*8, dimension(nw), intent(in) :: refl, trans
     ! CANOPY
-    REAL*8, intent(in) :: lai,LIDFa,LIDFb,psoil,rsoil
+    REAL*8, intent(in) :: lai,LIDFa,LIDFb
     REAL*8, intent(in) :: hspot
     REAL*8, intent(in) :: tts,tto,psi
     INTEGER, intent(in) :: TypeLidf   
+    ! SOIL
+    REAL*8, dimension(nw), intent(in) :: rsoil0
+    ! Precalculations
     REAL*8,ALLOCATABLE,SAVE :: resh(:),resv(:)
-    REAL*8,ALLOCATABLE,SAVE :: rsoil0(:),PARdiro(:),PARdifo(:)
-    REAL*8, dimension(nw), intent(in) :: soil_spectrum1
-    REAL*8, dimension(nw), intent(in) :: soil_spectrum2
+    REAL*8,ALLOCATABLE,SAVE :: PARdiro(:),PARdifo(:)
+    
 
     INTEGER :: ii
     REAL*8 :: ihot, skyl
@@ -188,7 +194,7 @@
     ! resh : hemispherical reflectance
     ! resv : directional reflectance
     ALLOCATE (resh(nw),resv(nw))
-    ALLOCATE (rsoil_old(nw))
+    !ALLOCATE (rsoil_old(nw))
 
         !TypeLidf=1
         ! if 2-parameters LIDF: TypeLidf=1
@@ -229,11 +235,11 @@
     !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         ! rsoil1 = dry soil
         ! rsoil2 = wet soil
-        ALLOCATE (rsoil0(nw))
+        !ALLOCATE (rsoil0(nw))
         !psoil   =   1.      ! soil factor (psoil=0: wet soil / psoil=1: dry soil)
         ! rsoil : soil brightness  term
 
-        rsoil0=rsoil*(psoil*soil_spectrum1+(1-psoil)*soil_spectrum2)
+        !rsoil0=rsoil*(psoil*soil_spectrum1+(1-psoil)*soil_spectrum2)
 
     !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     !!  4SAIL canopy structure parm !!
@@ -249,7 +255,7 @@
     !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     !!        CALL PRO4SAIL         !!
     !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        print*, refl(400),tau(400),rsoil0(400)
+        
         CALL SAIL(refl, trans,LIDFa,LIDFb,TypeLIDF,LAI,hspot,tts,tto,psi,rsoil0)
 
     !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -269,7 +275,10 @@
         ! resv : directional reflectance
         
         !retval = (rdot*PARdifo+rsot*PARdiro)/(PARdiro+PARdifo)
-        retval = rsot
+        retval(1, :) = rsot !  bi-directional reflectance factor
+        retval(2, :) = rddt ! bi-hemispherical reflectance factor
+        retval(3, :) = rsdt ! directional-hemispherical (illumination direction)
+        retval(4, :) = rdot ! hemispherical-directional (view direction)
         deallocate ( lrt )
         deallocate ( rho )
         deallocate ( tau )
@@ -282,9 +291,9 @@
         ! resh : hemispherical reflectance
         ! resv : directional reflectance
         deALLOCATE (resh,resv)
-        deALLOCATE (rsoil_old)
-        deALLOCATE (rsoil0)
+        !deALLOCATE (rsoil_old)
+        !deALLOCATE (rsoil0)
         !WRITE( *,'(i4,f10.6)') (lambda(ii),run_prosail(ii), ii=1,nw)
-    END subroutine run_sail
+    END subroutine run_sailf
     
     
