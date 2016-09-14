@@ -6,9 +6,9 @@ from prosail_fortran import mod_dataspec_p5b as spectral_libs
 
 
 def run_prosail(n, cab, car, cbrown, cw, cm, lai, lidfa, hspot,
-                 tts, tto, psi, typelidf=2, lidfb=0., factor="SDR",
-                 rsoil0=None, rsoil=None, psoil=None,
-                 soil_spectrum1=None, soil_spectrum2=None ):
+                tts, tto, psi, typelidf=2, lidfb=0., factor="SDR",
+                rsoil0=None, rsoil=None, psoil=None,
+                soil_spectrum1=None, soil_spectrum2=None):
     """Run the PROSPECT_5B and SAILh radiative transfer models. The soil
     model is a linear mixture model, where two spectra are combined together as
 
@@ -74,27 +74,28 @@ def run_prosail(n, cab, car, cbrown, cw, cm, lai, lidfa, hspot,
     """
 
     factor = factor.upper()
-    if factor not in [ "SDR", "BHR", "DHR", "HDR", "ALL"]:
+    if factor not in ["SDR", "BHR", "DHR", "HDR", "ALL"]:
         raise ValueError, "'factor' must be one of SDR, BHR, DHR, HDR or ALL"
 
     if soil_spectrum1 is not None:
-        assert ( len(soil_spectrum1) == 2101 )
+        assert (len(soil_spectrum1) == 2101)
     else:
         soil_spectrum1 = spectral_libs.rsoil1
 
     if soil_spectrum2 is not None:
-        assert ( len(soil_spectrum1) == 2101 )
+        assert (len(soil_spectrum1) == 2101)
     else:
         soil_spectrum2 = spectral_libs.rsoil2
 
     if rsoil0 is None:
-        if ( rsoil is None ) or ( psoil is None ):
-            raise ValueError, "If rsoil0 isn't define, then rsoil and psoil" +\
-            " need to be defined!"
-        rsoil0 = rsoil*(psoil*soil_spectrum1+(1.-psoil)*soil_spectrum2)
+        if (rsoil is None) or (psoil is None):
+            raise ValueError, "If rsoil0 isn't define, then rsoil and psoil" + \
+                              " need to be defined!"
+        rsoil0 = rsoil * (
+        psoil * soil_spectrum1 + (1. - psoil) * soil_spectrum2)
 
-    rho = prosail (n, cab, car, cbrown, cw, cm, lai, lidfa, lidfb, rsoil0,
-                   hspot, tts, tto, psi, typelidf)
+    rho = prosail(n, cab, car, cbrown, cw, cm, lai, lidfa, lidfb, rsoil0,
+                  hspot, tts, tto, psi, typelidf)
 
     if factor == "SDR":
         return rho[0, :]
@@ -108,10 +109,10 @@ def run_prosail(n, cab, car, cbrown, cw, cm, lai, lidfa, hspot,
         return rho
 
 
-def run_sail (refl, trans, lai, lidfa, hspot, tts, tto, psi,
-              typelidf=2, lidfb=0., factor="SDR",
-              rsoil0=None, rsoil=None, psoil=None,
-              soil_spectrum1=None,soil_spectrum2=None ):
+def run_sail(refl, trans, lai, lidfa, hspot, tts, tto, psi,
+             typelidf=2, lidfb=0., factor="SDR",
+             rsoil0=None, rsoil=None, psoil=None,
+             soil_spectrum1=None, soil_spectrum2=None):
     """Run the SAILh radiative transfer model. The soil model is a linear
     mixture model, where two spectra are combined together as
 
@@ -172,26 +173,27 @@ def run_sail (refl, trans, lai, lidfa, hspot, tts, tto, psi,
 
     """
     factor = factor.upper()
-    if factor not in [ "SDR", "BHR", "DHR", "HDR", "ALL"]:
-        raise ValueError, "'factor' must be one of SDR, BHR, DHR, HDR or ALL"
-
+    if factor not in ["SDR", "BHR", "DHR", "HDR", "ALL"]:
+        raise ValueError, '\'factor\' must be one of SDR, BHR, DHR, HDR or ALL'
 
     if soil_spectrum1 is not None:
-        assert ( len(soil_spectrum1) == 2101 )
+        assert (len(soil_spectrum1) == 2101)
     else:
         soil_spectrum1 = spectral_libs.rsoil1
 
     if soil_spectrum2 is not None:
-        assert ( len(soil_spectrum1) == 2101 )
+        assert (len(soil_spectrum1) == 2101)
     else:
         soil_spectrum2 = spectral_libs.rsoil2
 
     if rsoil0 is None:
-        if ( rsoil is None ) or ( psoil is None ):
-            raise ValueError, "If rsoil0 isn't define, then rsoil and psoil" +\
-            " need to be defined!"
-        rsoil0 = rsoil*(psoil*soil_spectrum1+(1.-psoil)*soil_spectrum2)
-    rho = sail (refl,trans,lai,lidfa,lidfb,rsoil0,hspot,tts,tto,psi,typelidf )
+        if (rsoil is None) or (psoil is None):
+            raise ValueError, "If rsoil0 isn't defined, then rsoil " + \
+                              "and psoil need to be defined!"
+        rsoil0 = rsoil * (psoil * soil_spectrum1 +
+                          (1. - psoil) * soil_spectrum2)
+    rho = sail(refl, trans, lai, lidfa, lidfb, rsoil0, hspot, tts, tto, psi,
+               typelidf)
 
     if factor == "SDR":
         return rho[0, :]
