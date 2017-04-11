@@ -1,12 +1,16 @@
 import numpy as np
 from prosail_fortran import run_sailf as sail
 from prosail_fortran import run_prosailf as prosail
-from prosail_fortran import prospect_5b
+#from prosail_fortran import prospect_5b
+from prospect_d import prospect_d
 from prosail_fortran import mod_dataspec_p5b as spectral_libs
 
+import pkgutil
+from StringIO import StringIO
 
-def run_prosail(n, cab, car, cbrown, cw, cm, lai, lidfa, hspot,
-                tts, tto, psi, typelidf=2, lidfb=0., factor="SDR",
+def run_prosail(n, cab, car,  cbrown, cw, cm, lai, lidfa, hspot,
+                tts, tto, psi, ant=0.0, alpha=40., prospect_version="5", 
+                typelidf=2, lidfb=0., factor="SDR",
                 rsoil0=None, rsoil=None, psoil=None,
                 soil_spectrum1=None, soil_spectrum2=None):
     """Run the PROSPECT_5B and SAILh radiative transfer models. The soil
@@ -44,6 +48,13 @@ def run_prosail(n, cab, car, cbrown, cw, cm, lai, lidfa, hspot,
         Sensor zenith angle
     psi: float
         Relative sensor-solar azimuth angle ( saa - vaa )
+    ant: float
+        leaf anthocyanin concentration (default set to 0)
+    alpha: float
+        The alpha angle (in degrees) used in the surface scattering
+        calculations. By default it's set to 40 degrees.
+    prospect_version: str
+        Which PROSPECT version to use. We have "5" and "D"
     typelidf: int, optional
         The type of leaf angle distribution function to use. By default, is set
         to 2.
@@ -94,8 +105,26 @@ def run_prosail(n, cab, car, cbrown, cw, cm, lai, lidfa, hspot,
         rsoil0 = rsoil * (
         psoil * soil_spectrum1 + (1. - psoil) * soil_spectrum2)
 
-    rho = prosail(n, cab, car, cbrown, cw, cm, lai, lidfa, lidfb, rsoil0,
-                  hspot, tts, tto, psi, typelidf)
+    if prospect_version == "5":
+        wv, refl, trans = prospect_d (n, cab, car, cbrown, cw, cm, 0.0,
+                                      spectral_libs.refractive,
+                                      spectral_libs.k_cab, spectral_libs.k_car,
+                                      spectral_libs.k_brown, 
+                                      spectral_libs.k_cw, spectral_libs.k_cm,
+                                      np.zeros_like(spectral_libs.k_cm), 
+                                      alpha=alpha)
+    elif prospect_version.upper() == "D":
+        prospect_d_spectra = pkgutil.get_data('prosail', 'prospect_d_spectra.txt')
+        d = np.loadtxt( StringIO(prospect_d_spectra))
+        wv, refl, trans = prospect_d (n, cab, car, cbrown, cw, cm, ant,
+                                d[:,1], d[:,2], d[:,3], d[:,5], d[:,6], 
+                                d[:,7], d[:,4], alpha=alpha)
+
+    else:
+        raise ValueError("prospect_version can only be 5 or D!")
+    
+    rho = sail(refl, trans, lai, lidfa, lidfb, rsoil0, hspot, tts, tto, psi,
+               typelidf)
 
     if factor == "SDR":
         return rho[0, :]

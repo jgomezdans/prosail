@@ -46,5 +46,7 @@ if __name__ == "__main__":
         author_email = author_email,
         classifiers = classifiers,
         configuration = configuration,
-        version="1.3.0",
+        package_data={"prosail":["*.txt"]},
+        include_package_data=True,
+        version="1.5.0",
         packages=["prosail"])
