@@ -1,12 +1,44 @@
 import numpy as np
 from prosail_fortran import run_sailf as sail
 from prosail_fortran import run_prosailf as prosail
-#from prosail_fortran import prospect_5b
+from prosail_fortran import prospect_5b
 from prospect_d import prospect_d
 from prosail_fortran import mod_dataspec_p5b as spectral_libs
 
 import pkgutil
 from StringIO import StringIO
+
+def run_prospect(n, cab, car,  cbrown, cw, cm, ant=0.0, 
+                 prospect_version="D",  
+                 nr=None, kab=None, kcar=None, kbrown=None, kw=None, 
+                 km=None, kant=None, alpha=40.):
+    if prospect_version == "5":
+        # Call the original PROSPECT-5. In case the user has supplied 
+        # spectra, use them.
+        wv, refl, trans = prospect_d (n, cab, car, cbrown, cw, cm, 0.0,
+                    spectral_libs.refractive if nr is None else nr,
+                    spectral_libs.k_cab if kab is None else kab,
+                    spectral_libs.k_car if kcar is None else kcar,
+                    spectral_libs.k_brown if kbrown is None else kbrown, 
+                    spectral_libs.k_cw if kw is None else kw,
+                    spectral_libs.k_cm if km is None else km,
+                    np.zeros_like(spectral_libs.k_cm), 
+                    alpha=alpha)
+    elif prospect_version.upper() == "D":
+        prospect_d_spectra = pkgutil.get_data('prosail', 'prospect_d_spectra.txt')
+        d = np.loadtxt( StringIO(prospect_d_spectra))
+        wv, refl, trans = prospect_d (n, cab, car, cbrown, cw, cm, ant,
+                                d[:,1] if nr is None else nr,
+                                d[:,2] if kab is None else kab,
+                                d[:,3] if kcar is None else kcar,
+                                d[:,5] if kbrown is None else kbrown,
+                                d[:,6] if kw is None else kw,
+                                d[:,7] if km is None else km,
+                                d[:,4] if kant is None else kant, alpha=alpha)
+    else:
+        raise ValueError("prospect_version can only be 5 or D!")
+
+    return wv, refl, trans
 
 def run_prosail(n, cab, car,  cbrown, cw, cm, lai, lidfa, hspot,
                 tts, tto, psi, ant=0.0, alpha=40., prospect_version="5", 

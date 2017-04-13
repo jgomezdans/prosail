@@ -52,6 +52,12 @@ def prospect_d (N, cab, car, cbrown, cw, cm, ant,
             alpha=40.):
 
     lambdas = np.arange(400, 2501) # wavelengths
+    n_lambdas = len(lambdas)
+    n_elems_list = [len(spectrum)  for spectrum in 
+                [nr, kab, kcar, kbrown, kw, km, kant]]
+    if any(n_elems != n_lambdas for n_elems in n_elems_list):
+        raise ValueError("Leaf spectra don't have the right shape!")
+    
     kall = ( cab*kab + car*kcar + ant*kant + cbrown*kbrown +
             cw*kw + cm*km)/N
     j = kall > 0
