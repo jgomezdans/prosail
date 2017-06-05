@@ -1,16 +1,6 @@
 #!/usr/bin/env python
 """Setup script for building prosail's python bindings"""
 
-def configuration(parent_package='',top_path=None):
-    from numpy.distutils.misc_util import Configuration
-    config = Configuration(parent_package,top_path)
-    config.add_extension('prosail_fortran', ['prosail/dataSpec_P5B.f90', \
-        "prosail/dladgen.f", "prosail/LIDF.f90", "prosail/MODULE_PRO4SAIL.f90", \
-        "prosail/PRO4SAIL.f90", "prosail/prospect_5B.f90", \
-        "prosail/run_prosail.f90","prosail/tav_abs.f90", \
-        "prosail/volscatt.f90","prosail/prosail_fortran.pyf"] )
-    return config
-
 if __name__ == "__main__":
     import os
     from numpy.distutils.core import setup
@@ -45,8 +35,7 @@ if __name__ == "__main__":
 	url=url,
         author_email = author_email,
         classifiers = classifiers,
-        configuration = configuration,
         package_data={"prosail":["*.txt"]},
         include_package_data=True,
-        version="1.5.0",
+        version="2.0.0",
         packages=["prosail"])

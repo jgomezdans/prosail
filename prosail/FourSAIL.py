@@ -1,9 +1,14 @@
 #!/usr/bin/env python
-from functools import lru_cache
+from math import cos, asin,tan, log, exp, sqrt, radians
+    
+
+try:
+    from functools import lru_cache
+except ImportError:
+    from backports.functools_lru_cache import lru_cache
+
 import numpy as np
-
-
-from numba import autojit, jit
+from numba import autojit, jit, float32
 
 
 def weighted_sum_over_lidf (lidf, tts, tto, psi, cts, cto, ctscto):
@@ -131,14 +136,14 @@ def volscatt(tts,tto,psi,ttl) :
     if np.abs(so) > 1e-6 : 
         cosbto = -co/so
     if np.abs(cosbts) < 1.0:
-        bts = np.acos(cosbts)
+        bts = np.arccos(cosbts)
         ds = ss
     else:
         bts = np.pi
         ds = cs
     chi_s = 2./np.pi*((bts-np.pi*0.5)*cs+np.sin(bts)*ss)
     if abs(cosbto) < 1.0:
-        bto = np.acos(cosbto)
+        bto = np.arccos(cosbto)
         do_ = so
     else:
         if tto < 90.:
@@ -176,7 +181,7 @@ def volscatt(tts,tto,psi,ttl) :
    
     return [chi_s,chi_o,frho,ftau]    
 
-@autojit
+@jit( float32( float32, float32, float32 ))
 def Jfunc1(k,l,t) :
     ''' J1 function with avoidance of singularity problem.'''
     nb=len(l)
@@ -290,7 +295,6 @@ def ellipsoidal(alpha,n_elements=18):
         ISSN 0168-1923, http://dx.doi.org/10.1016/0168-1923(90)90030-A.
     '''
     
-    from math import cos, asin,tan, log, exp, sqrt, radians
     
     alpha=float(alpha)
     excent=exp(-1.6184e-5*alpha**3.+2.1145e-3*alpha**2.-1.2390e-1*alpha+3.2491)
@@ -430,9 +434,11 @@ def foursail (rho, tau, lidfa, lidfb, lidftype, lai, hotspot,
     sof=0.
 
     try:
-        ks, ko, bf, sob, sof = cweighted_sum_over_lidf(lidf, tts, tto, psi)
+        ks, ko, bf, sob, sof = cweighted_sum_over_lidf(lidf, tts, tto, psi, 
+                                                       cts, cto, ctscto)
     except:
-        ks, ko, bf, sob, sof = weighted_sum_over_lidf(lidf, tts, tto, psi)
+        ks, ko, bf, sob, sof = weighted_sum_over_lidf(lidf, tts, tto, psi, 
+                                                       cts, cto, ctscto)
 
 
     # Geometric factors to be used later with rho and tau

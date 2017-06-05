@@ -124,7 +124,7 @@ def prospect_d (N, cab, car, cbrown, cw, cm, ant,
     n_lambdas = len(lambdas)
     n_elems_list = [len(spectrum)  for spectrum in 
                 [nr, kab, kcar, kbrown, kw, km, kant]]
-    if not any(n_elems != n_lambdas for n_elems in n_elems_list):
+    if not all(n_elems == n_lambdas for n_elems in n_elems_list):
         raise ValueError("Leaf spectra don't have the right shape!")
     
     kall = (cab*kab + car*kcar + ant*kant + cbrown*kbrown +
