@@ -1,9 +1,49 @@
+#!/usr/bin/env python
+"""The PROSPECT leaf optical properties model
+Versions 5 and D
+
+"""
 from numba import jit
 import numpy as np
 from scipy.special import expi
 import matplotlib.pyplot as plt
 
-import prosail
+
+def run_prospect(n, cab, car,  cbrown, cw, cm, ant=0.0, 
+                 prospect_version="D",  
+                 nr=None, kab=None, kcar=None, kbrown=None, kw=None, 
+                 km=None, kant=None, alpha=40.):
+    """The PROSPECT model, versions 5 and D"""
+    
+    if prospect_version == "5":
+        # Call the original PROSPECT-5. In case the user has supplied 
+        # spectra, use them.
+        wv, refl, trans = prospect_d (n, cab, car, cbrown, cw, cm, 0.0,
+                    spectral_lib.prospect5.nr if nr is None else nr,
+                    spectral_lib.prospect5.kab if kab is None else kab,
+                    spectral_lib.prospect5.kcar if kcar is None else kcar,
+                    spectral_lib.prospect5.kbrown \
+                        if kbrown is None else kbrown, 
+                    spectral_lib.prospect5.kw if kw is None else kw,
+                    spectral_lib.prospect5.km if km is None else km,
+                    np.zeros_like(spectral_lib.prospect5.km), 
+                    alpha=alpha)
+    elif prospect_version.upper() == "D":
+        wv, refl, trans = prospect_d (n, cab, car, cbrown, cw, cm, ant,
+                    spectral_lib.prospectd.nr if nr is None else nr,
+                    spectral_lib.prospectd.kab if kab is None else kab,
+                    spectral_lib.prospectd.kcar if kcar is None else kcar,
+                    spectral_lib.prospectd.kbrown \
+                        if kbrown is None else kbrown,
+                    spectral_lib.prospectd.kw if kw is None else kw,
+                    spectral_lib.prospectd.km if km is None else km,
+                    spectral_lib.prospectd.kant if kant is None else kant, 
+                    alpha=alpha)
+    else:
+        raise ValueError("prospect_version can only be 5 or D!")
+
+    return wv, refl, trans
+
 
 @jit
 def calctav ( alpha, nr):
@@ -131,27 +171,27 @@ def prospect_d (N, cab, car, cbrown, cw, cm, ant,
 
     return lambdas, refl, tran
 
-if __name__ == "__main__":
+###if __name__ == "__main__":
     
-    k_cab = prosail.spectral_libs.k_cab
-    k_w = prosail.spectral_libs.k_cw
-    k_m = prosail.spectral_libs.k_cm
-    k_car = prosail.spectral_libs.k_car
-    k_brown = prosail.spectral_libs.k_brown
-    nr = prosail.spectral_libs.refractive
+    ###k_cab = prosail.spectral_libs.k_cab
+    ###k_w = prosail.spectral_libs.k_cw
+    ###k_m = prosail.spectral_libs.k_cm
+    ###k_car = prosail.spectral_libs.k_car
+    ###k_brown = prosail.spectral_libs.k_brown
+    ###nr = prosail.spectral_libs.refractive
 
-    wv, r, t = prospect_d (2.1, 60., 10., 0.1, 0.013, 0.016, 0,
-            nr, k_cab, k_car, k_brown, k_w, k_m, k_m*0.,
-            alpha=40.)
+    ###wv, r, t = prospect_d (2.1, 60., 10., 0.1, 0.013, 0.016, 0,
+            ###nr, k_cab, k_car, k_brown, k_w, k_m, k_m*0.,
+            ###alpha=40.)
     
-    rt = prosail.prospect_5b(2.1, 60., 10., 0.1, 0.013, 0.016)
-    plt.plot(wv, r-rt[:,0], '--')
-    plt.plot(wv, t-rt[:,1], '--')
+    ###rt = prosail.prospect_5b(2.1, 60., 10., 0.1, 0.013, 0.016)
+    ###plt.plot(wv, r-rt[:,0], '--')
+    ###plt.plot(wv, t-rt[:,1], '--')
 
-    wv, r, t = prospect_d (2.1, 10., 10., 0.1, 0.013, 0.016, 0,
-            nr, k_cab, k_car, k_brown, k_w, k_m, k_m*0.,
-            alpha=40.)
-#    plt.plot(wv, r)
-    rt = prosail.prospect_5b(2.1, 10., 10., 0.1, 0.013, 0.016)
-    plt.plot(wv, r-rt[:,0], '-')
-    plt.plot(wv, t-rt[:,1], '-')
+    ###wv, r, t = prospect_d (2.1, 10., 10., 0.1, 0.013, 0.016, 0,
+            ###nr, k_cab, k_car, k_brown, k_w, k_m, k_m*0.,
+            ###alpha=40.)
+####    plt.plot(wv, r)
+    ###rt = prosail.prospect_5b(2.1, 10., 10., 0.1, 0.013, 0.016)
+    ###plt.plot(wv, r-rt[:,0], '-')
+    ###plt.plot(wv, t-rt[:,1], '-')
