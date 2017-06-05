@@ -228,3 +228,57 @@ def run_sail(refl, trans, lai, lidfa, hspot, tts, tto, psi,
         return rdot
     elif factor == "ALL":
         return [rsot, rddt, rsdt, rdot]
+
+
+def run_thermal_sail(lam,  
+                     tveg, tsoil, tveg_sunlit, tsoil_sunlit, t_atm, 
+                     lai, lidfa, hspot, rsoil, 
+                     tts, tto, psi,
+                     refl=None, emv=None, ems=None,
+                     typelidf=2, lidfb=0):
+    c1 = 3.741856E-16
+    c2 = 14388.0
+    # Calculate the thermal emission from the different
+    # components using Planck's Law
+    top = (1.0e-6)*c1*(lam*1e-6)**(-5.)
+    Hc = top / ( np.exp ( c2/(lam*tveg))-1.)         # Shade leaves
+    Hh = top / ( np.exp ( c2/(lam*tveg_sunlit))-1.)  # Sunlit leaves
+    Hd = top / ( np.exp ( c2/(lam*tsoil))-1.)        # shade soil 
+    Hs = top / ( np.exp ( c2/(lam*tsoil_sunlit))-1.) # Sunlit soil
+    Hsky = top / ( np.exp ( c2/(lam*t_atm))-1.)      # Sky emission
+    
+    # Emissivity calculations
+    if refl is not None and emv is None:
+        emv = 1. - refl # Assuming absorption is 1
+    if rsoil is not None and ems is None:
+        ems = 1. - rsoil
+    
+    [tss, too, tsstoo, rdd, tdd, rsd, tsd, rdo, tdo,
+         rso, rsos, rsod, rddt, rsdt, rdot, rsodt, rsost, rsot,
+         gammasdf, gammasdb, gammaso] = foursail (refl, np.zeros_like(refl),  
+                                                  lidfa, lidfb, typelidf, 
+                                                  lai, hspot, 
+                                                  tts, tto, psi, rsoil)
+    
+    gammad = 1.0 - rdd - tdd
+    gammao = 1.0 - rdo - tdo - too
+
+    tso = tss*too+tss*(tdo+rsoil*rdd*too)/(1.0-rsoil*rdd)
+    ttot = (too+tdo)/(1.0-rsoil*rdd)
+    gammaot = gammao + ttot*rsoil*gammad
+    gammasot = gammaso + ttot*rsoil*gammasdf
+
+    aeev = gammaot
+    aees = ttot*ems
+
+    Lw = ( rdot*Hsky + 
+            (aeev*Hc + 
+            gammasot*emv*(Hh-Hc) + 
+            aees*Hd + 
+            tso*ems*(Hs-Hd)))/np.pi
+    
+    dnoem1 = top/(Lw*np.pi)
+    Tbright = c2/(lam*np.log(dnoem1+1.0))
+    dir_em = 1.0 - rdot 
+    return Lw, Tbright, dir_em
+        
