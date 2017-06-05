@@ -1,9 +1,11 @@
+from numba import jit
 import numpy as np
 from scipy.special import expi
 import matplotlib.pyplot as plt
 
 import prosail
 
+@jit
 def calctav ( alpha, nr):
     #***********************************************************************
     #calctav
@@ -45,27 +47,8 @@ def calctav ( alpha, nr):
     return tav
 
 
-
-
-def prospect_d (N, cab, car, cbrown, cw, cm, ant,
-            nr, kab, kcar, kbrown, kw, km, kant,
-            alpha=40.):
-
-    lambdas = np.arange(400, 2501) # wavelengths
-    n_lambdas = len(lambdas)
-    n_elems_list = [len(spectrum)  for spectrum in 
-                [nr, kab, kcar, kbrown, kw, km, kant]]
-    if any(n_elems != n_lambdas for n_elems in n_elems_list):
-        raise ValueError("Leaf spectra don't have the right shape!")
-    
-    kall = ( cab*kab + car*kcar + ant*kant + cbrown*kbrown +
-            cw*kw + cm*km)/N
-    j = kall > 0
-    t1 = (1-kall)*np.exp(-kall)
-    t2 = kall**2*(-expi(-kall))
-    tau = np.ones_like(t1)
-    tau[j] = t1[j] + t2[j]
-
+@jit
+def refl_trans_one_layer (alpha, nr, tau):
     # ***********************************************************************
     # reflectance and transmittance of one layer
     # ***********************************************************************
@@ -90,6 +73,29 @@ def prospect_d (N, cab, car, cbrown, cw, cm, ant,
     # bottom surface side
     t = t12*tau*t21/denom
     r = r12+r21*tau*t
+    
+    return r, t, Ra, Ta, denom
+
+def prospect_d (N, cab, car, cbrown, cw, cm, ant,
+            nr, kab, kcar, kbrown, kw, km, kant,
+            alpha=40.):
+
+    lambdas = np.arange(400, 2501) # wavelengths
+    n_lambdas = len(lambdas)
+    n_elems_list = [len(spectrum)  for spectrum in 
+                [nr, kab, kcar, kbrown, kw, km, kant]]
+    if not any(n_elems != n_lambdas for n_elems in n_elems_list):
+        raise ValueError("Leaf spectra don't have the right shape!")
+    
+    kall = (cab*kab + car*kcar + ant*kant + cbrown*kbrown +
+            cw*kw + cm*km)/N
+    j = kall > 0
+    t1 = (1-kall)*np.exp(-kall)
+    t2 = kall**2*(-expi(-kall))
+    tau = np.ones_like(t1)
+    tau[j] = t1[j] + t2[j]
+
+    r, t, Ra, Ta, denom = refl_trans_one_layer (alpha, nr, tau)
 
     # ***********************************************************************
     # reflectance and transmittance of N layers
