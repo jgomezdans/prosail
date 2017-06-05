@@ -1,8 +1,10 @@
 #!/usr/bin/env python
 import numpy as np
-import scipy
+
+from prosail import spectral_lib
 
 from prospect_d import run_prospect
+from FourSAIL import foursail
 
 def run_prosail(n, cab, car,  cbrown, cw, cm, lai, lidfa, hspot,
                 tts, tto, psi, ant=0.0, alpha=40., prospect_version="5", 
@@ -87,12 +89,12 @@ def run_prosail(n, cab, car,  cbrown, cw, cm, lai, lidfa, hspot,
     if soil_spectrum1 is not None:
         assert (len(soil_spectrum1) == 2101)
     else:
-        soil_spectrum1 = spectral_libs.rsoil1
+        soil_spectrum1 = spectral_lib.soil.rsoil1
 
     if soil_spectrum2 is not None:
         assert (len(soil_spectrum1) == 2101)
     else:
-        soil_spectrum2 = spectral_libs.rsoil2
+        soil_spectrum2 = spectral_lib.soil.rsoil2
 
     if rsoil0 is None:
         if (rsoil is None) or (psoil is None):
@@ -102,23 +104,25 @@ def run_prosail(n, cab, car,  cbrown, cw, cm, lai, lidfa, hspot,
         psoil * soil_spectrum1 + (1. - psoil) * soil_spectrum2)
 
     wv, refl, trans = run_prospect (n, cab, car,  cbrown, cw, cm, ant=ant, 
-                 prospect_version=prospect_version,  
-                 nr=nr, kab=kab, kcar=kcar, kbrown=kbrown, kw=kw, 
-                 km=km, kant=kant, alpha=alpha)
+                 prospect_version=prospect_version, alpha=alpha)
     
-    rho = sail(refl, trans, lai, lidfa, lidfb, rsoil0, hspot, tts, tto, psi,
-               typelidf)
+    [tss, too, tsstoo, rdd, tdd, rsd, tsd, rdo, tdo,
+         rso, rsos, rsod, rddt, rsdt, rdot, rsodt, rsost, rsot,
+         gammasdf, gammasdb, gammaso] = foursail (refl, trans,  
+                                                  lidfa, lidfb, typelidf, 
+                                                  lai, hspot, 
+                                                  tts, tto, psi, rsoil)
 
     if factor == "SDR":
-        return rho[0, :]
+        return rsot
     elif factor == "BHR":
-        return rho[1, :]
+        return rddt
     elif factor == "DHR":
-        return rho[2, :]
+        return rsdt
     elif factor == "HDR":
-        return rho[3, :]
+        return rdot
     elif factor == "ALL":
-        return rho
+        return [rsot, rddt, rsdt, rdot]
 
 
 def run_sail(refl, trans, lai, lidfa, hspot, tts, tto, psi,
@@ -184,39 +188,43 @@ def run_sail(refl, trans, lai, lidfa, hspot, tts, tto, psi,
 
 
     """
+
     factor = factor.upper()
     if factor not in ["SDR", "BHR", "DHR", "HDR", "ALL"]:
-        raise ValueError, '\'factor\' must be one of SDR, BHR, DHR, HDR or ALL'
+        raise ValueError, "'factor' must be one of SDR, BHR, DHR, HDR or ALL"
 
     if soil_spectrum1 is not None:
         assert (len(soil_spectrum1) == 2101)
     else:
-        soil_spectrum1 = spectral_libs.rsoil1
+        soil_spectrum1 = spectral_lib.soil.rsoil1
 
     if soil_spectrum2 is not None:
         assert (len(soil_spectrum1) == 2101)
     else:
-        soil_spectrum2 = spectral_libs.rsoil2
+        soil_spectrum2 = spectral_lib.soil.rsoil2
 
     if rsoil0 is None:
         if (rsoil is None) or (psoil is None):
-            raise ValueError, "If rsoil0 isn't defined, then rsoil " + \
-                              "and psoil need to be defined!"
-        rsoil0 = rsoil * (psoil * soil_spectrum1 +
-                          (1. - psoil) * soil_spectrum2)
-    rho = sail(refl, trans, lai, lidfa, lidfb, rsoil0, hspot, tts, tto, psi,
-               typelidf)
+            raise ValueError, "If rsoil0 isn't define, then rsoil and psoil" + \
+                              " need to be defined!"
+        rsoil0 = rsoil * (
+        psoil * soil_spectrum1 + (1. - psoil) * soil_spectrum2)
+
+    
+    [tss, too, tsstoo, rdd, tdd, rsd, tsd, rdo, tdo,
+         rso, rsos, rsod, rddt, rsdt, rdot, rsodt, rsost, rsot,
+         gammasdf, gammasdb, gammaso] = foursail (refl, trans,  
+                                                  lidfa, lidfb, typelidf, 
+                                                  lai, hspot, 
+                                                  tts, tto, psi, rsoil)
 
     if factor == "SDR":
-        return rho[0, :]
+        return rsot
     elif factor == "BHR":
-        return rho[1, :]
+        return rddt
     elif factor == "DHR":
-        return rho[2, :]
+        return rsdt
     elif factor == "HDR":
-        return rho[3, :]
+        return rdot
     elif factor == "ALL":
-        return rho
-
-
-
+        return [rsot, rddt, rsdt, rdot]
