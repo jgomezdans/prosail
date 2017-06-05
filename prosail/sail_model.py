@@ -111,7 +111,7 @@ def run_prosail(n, cab, car,  cbrown, cw, cm, lai, lidfa, hspot,
          gammasdf, gammasdb, gammaso] = foursail (refl, trans,  
                                                   lidfa, lidfb, typelidf, 
                                                   lai, hspot, 
-                                                  tts, tto, psi, rsoil)
+                                                  tts, tto, psi, rsoil0)
 
     if factor == "SDR":
         return rsot
@@ -216,7 +216,7 @@ def run_sail(refl, trans, lai, lidfa, hspot, tts, tto, psi,
          gammasdf, gammasdb, gammaso] = foursail (refl, trans,  
                                                   lidfa, lidfb, typelidf, 
                                                   lai, hspot, 
-                                                  tts, tto, psi, rsoil)
+                                                  tts, tto, psi, rsoil0)
 
     if factor == "SDR":
         return rsot

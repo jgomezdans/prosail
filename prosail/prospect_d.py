@@ -3,7 +3,6 @@
 Versions 5 and D
 
 """
-from numba import jit
 import numpy as np
 from scipy.special import expi
 
@@ -45,7 +44,6 @@ def run_prospect(n, cab, car,  cbrown, cw, cm, ant=0.0,
     return wv, refl, trans
 
 
-@jit
 def calctav ( alpha, nr):
     #***********************************************************************
     #calctav
@@ -87,7 +85,6 @@ def calctav ( alpha, nr):
     return tav
 
 
-@jit
 def refl_trans_one_layer (alpha, nr, tau):
     # ***********************************************************************
     # reflectance and transmittance of one layer

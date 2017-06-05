@@ -8,83 +8,11 @@ except ImportError:
     from backports.functools_lru_cache import lru_cache
 
 import numpy as np
-from numba import autojit, jit, float32
+import numba
 
 
-def weighted_sum_over_lidf (lidf, tts, tto, psi, cts, cto, ctscto):
-    ks = 0.
-    ko = 0.
-    bf = 0.
-    sob = 0.
-    sof = 0.
-    cts   = np.cos(np.radians(tts))
-    cto   = np.cos(np.radians(tto))
-    ctscto  = cts*cto
-    
-    n_angles=len(lidf)
-    angle_step=float(90.0/n_angles)
-    litab=[float(angle)*angle_step+(angle_step/2.0) for angle in range(n_angles)]
-    for i,ili in enumerate(litab):
-        ttl=float(ili)
-        cttl=np.cos(np.radians(ttl))
-        # SAIL volume scattering phase function gives interception and portions to be multiplied by rho and tau
-        [chi_s,chi_o,frho,ftau]=volscatt(tts,tto,psi,ttl)
-        # Extinction coefficients
-        ksli=chi_s/cts
-        koli=chi_o/cto
-        # Area scattering coefficient fractions
-        sobli=frho*np.pi/ctscto
-        sofli=ftau*np.pi/ctscto
-        bfli=cttl**2.
-        ks+=ksli*float(lidf[i])
-        ko+=koli*float(lidf[i])
-        bf+=bfli*float(lidf[i])
-        sob+=sobli*float(lidf[i])
-        sof+=sofli*float(lidf[i])
-    return ks, ko, bf, sob, sof
-
-cweighted_sum_over_lidf =jit(weighted_sum_over_lidf)
-
-@lru_cache(maxsize=16)
-def define_geometric_constants ( tts, tto, psi):
-    cts   = np.cos(np.radians(tts))
-    cto   = np.cos(np.radians(tto))
-    ctscto  = cts*cto
-    tants = np.tan(np.radians(tts))
-    tanto = np.tan(np.radians(tto))
-    cospsi  = np.cos(np.radians(psi))
-    dso = np.sqrt(tants**2.+tanto**2.-2.*tants*tanto*cospsi)
-    return cts, cto, ctscto, tants, tanto, cospsi, dso
-
-def hotspot_calculations(alf, lai, ko, ks ):
-    fhot=lai*np.sqrt(ko*ks)
-    # Integrate by exponential Simpson method in 20 steps the steps are arranged according to equal partitioning of the slope of the joint probability function
-    x1=0.
-    y1=0.
-    f1=1.
-    fint=(1.-np.exp(-alf))*.05
-    sumint=0.
-    for istep in range(1,21):
-        if istep < 20 :
-            x2 = -np.log(1.-istep*fint)/alf
-        else:
-            x2=1.
-        y2 = -(ko+ks)*lai*x2+fhot*(1.-np.exp(-alf*x2))/alf
-        f2 = np.exp(y2)
-        sumint = sumint+(f2-f1)*(x2-x1)/(y2-y1)
-        x1 = np.array(x2)
-        y1 = np.array(y2)
-        f1 = np.array(f2)
-    tsstoo = np.array(f1)
-    if np.isnan(sumint) : 
-        sumint=0.
-
-    return tsstoo, sumint
-
-chotspot_calculations = jit(hotspot_calculations)
-
-
-@autojit
+@numba.jit('Tuple((f8, f8, f8, f8))(f8,f8,f8,f8)',
+           nopython=True, cache=True)
 def volscatt(tts,tto,psi,ttl) :
     '''Compute volume scattering functions and interception coefficients
     for given solar zenith, viewing zenith, azimuth and leaf inclination angle.
@@ -179,9 +107,84 @@ def volscatt(tts,tto,psi,ttl) :
     if ftau < 0. : 
         ftau=0.
    
-    return [chi_s,chi_o,frho,ftau]    
+    return (chi_s,chi_o,frho,ftau)
 
-@jit( float32( float32, float32, float32 ))
+
+
+@numba.jit('Tuple((f8, f8, f8, f8, f8))(f8[:], f8, f8, f8)',
+           nopython=True, cache=True)
+def weighted_sum_over_lidf (lidf, tts, tto, psi):
+    ks = 0.
+    ko = 0.
+    bf = 0.
+    sob = 0.
+    sof = 0.
+    cts   = np.cos(np.radians(tts))
+    cto   = np.cos(np.radians(tto))
+    ctscto  = cts*cto
+    
+    n_angles=len(lidf)
+    angle_step=float(90.0/n_angles)
+    litab = np.arange(n_angles)*angle_step + (angle_step*0.5)
+
+    for i,ili in enumerate(litab):
+        ttl = 1.*ili
+        cttl=np.cos(np.radians(ttl))
+        # SAIL volume scattering phase function gives interception and portions to be multiplied by rho and tau
+        [chi_s,chi_o,frho,ftau]=volscatt(tts,tto,psi,ttl)
+        # Extinction coefficients
+        ksli=chi_s/cts
+        koli=chi_o/cto
+        # Area scattering coefficient fractions
+        sobli=frho*np.pi/ctscto
+        sofli=ftau*np.pi/ctscto
+        bfli=cttl**2.
+        ks+=ksli*float(lidf[i])
+        ko+=koli*float(lidf[i])
+        bf+=bfli*float(lidf[i])
+        sob+=sobli*float(lidf[i])
+        sof+=sofli*float(lidf[i])
+    return ks, ko, bf, sob, sof
+
+
+
+@lru_cache(maxsize=16)
+def define_geometric_constants ( tts, tto, psi):
+    cts   = np.cos(np.radians(tts))
+    cto   = np.cos(np.radians(tto))
+    ctscto  = cts*cto
+    tants = np.tan(np.radians(tts))
+    tanto = np.tan(np.radians(tto))
+    cospsi  = np.cos(np.radians(psi))
+    dso = np.sqrt(tants**2.+tanto**2.-2.*tants*tanto*cospsi)
+    return cts, cto, ctscto, tants, tanto, cospsi, dso
+
+@numba.jit("Tuple((f8,f8))(f8,f8,f8,f8)",
+           nopython=True, cache=True)
+def hotspot_calculations(alf, lai, ko, ks ):
+    fhot=lai*np.sqrt(ko*ks)
+    # Integrate by exponential Simpson method in 20 steps the steps are arranged according to equal partitioning of the slope of the joint probability function
+    x1=0.
+    y1=0.
+    f1=1.
+    fint=(1.-np.exp(-alf))*.05
+    sumint=0.
+    for istep in range(1,21):
+        if istep < 20 :
+            x2 = -np.log(1.-istep*fint)/alf
+        else:
+            x2=1.
+        y2 = -(ko+ks)*lai*x2+fhot*(1.-np.exp(-alf*x2))/alf
+        f2 = np.exp(y2)
+        sumint = sumint+(f2-f1)*(x2-x1)/(y2-y1)
+        x1 = x2
+        y1 = y2
+        f1 = f2
+    tsstoo = f1
+    if np.isnan(sumint) : 
+        sumint=0.
+    return tsstoo, sumint
+
 def Jfunc1(k,l,t) :
     ''' J1 function with avoidance of singularity problem.'''
     nb=len(l)
@@ -200,14 +203,13 @@ def Jfunc1(k,l,t) :
             result = 0.5*t*(np.exp(-k*t)+np.exp(-l*t))*(1.-(del_**2.)/12.)
     return result
 
-@autojit
 def Jfunc2(k,l,t) :
     '''J2 function.'''
     return (1.-np.exp(-(k+l)*t))/(k+l)
 
-
-@autojit
-def verhoef_bimodal(a,b,n_elements=18):
+@numba.jit('f8[:](f8,f8,i8)', 
+           nopython=True, cache=True)
+def verhoef_binomial(a,b,n_elements=18):
     '''Calculate the Leaf Inclination Distribution Function based on the 
     Verhoef's bimodal LIDF distribution.
     Parameters
@@ -241,34 +243,38 @@ def verhoef_bimodal(a,b,n_elements=18):
         http://library.wur.nl/WebQuery/clc/945481.
         '''
 
-    import math as m
     freq=1.0
     step=90.0/n_elements
-    lidf=[]
-    angles=[i*step for i in reversed(range(n_elements))]
+    lidf=np.zeros(n_elements)*1.
+    angles = (np.arange(n_elements)*step)[::-1]
+    i = 0
     for angle in angles:
-        tl1=m.radians(angle)
+        tl1=np.radians(angle)
         if a>1.0:
-            f = 1.0-m.cos(tl1)
+            f = 1.0-np.cos(tl1)
         else:
             eps=1e-8
             delx=1.0
             x=2.0*tl1
             p=float(x)
             while delx >= eps:
-                y = a*m.sin(x)+.5*b*m.sin(2.*x)
+                y = a*np.sin(x)+.5*b*np.sin(2.*x)
                 dx=.5*(y-x+p)
                 x=x+dx
                 delx=abs(dx)
-            f = (2.*y+p)/m.pi
+            f = (2.*y+p)/np.pi
         freq=freq-f
-        lidf.append(freq)
+        lidf[i] = freq
         freq=float(f)
-    lidf=list(reversed(lidf))
+        i += 1
+    lidf=lidf[::-1]
     return  lidf
-    
-@autojit
-def ellipsoidal(alpha,n_elements=18):
+
+
+
+@numba.jit('f8[:](f8,i8)',
+           nopython=True, cache=True)
+def campbell(alpha,n_elements=18):
     '''Calculate the Leaf Inclination Distribution Function based on the 
     mean angle of [Campbell1990] ellipsoidal LIDF distribution.
     Parameters
@@ -299,37 +305,36 @@ def ellipsoidal(alpha,n_elements=18):
     alpha=float(alpha)
     excent=exp(-1.6184e-5*alpha**3.+2.1145e-3*alpha**2.-1.2390e-1*alpha+3.2491)
     sum0 = 0.
-    freq=[]
+    freq = np.zeros(n_elements)
     step=90.0/n_elements
     for  i in range (n_elements):
         tl1=radians(i*step)
         tl2=radians((i+1.)*step)
-        x1  = excent/(sqrt(1.+excent**2.*tan(tl1)**2.))
-        x2  = excent/(sqrt(1.+excent**2.*tan(tl2)**2.))
+        x1  = excent/(np.sqrt(1.+excent**2.*np.tan(tl1)**2.))
+        x2  = excent/(np.sqrt(1.+excent**2.*np.tan(tl2)**2.))
         if excent == 1. :
-            freq.append(abs(cos(tl1)-cos(tl2)))
+            freq[i] = abs(np.cos(tl1)-np.cos(tl2))
         else :
-            alph  = excent/sqrt(abs(1.-excent**2.))
+            alph  = excent/np.sqrt(abs(1.-excent**2.))
             alph2 = alph**2.
             x12 = x1**2.
             x22 = x2**2.
             if excent > 1. :
-                alpx1 = sqrt(alph2+x12)
-                alpx2 = sqrt(alph2+x22)
-                dum   = x1*alpx1+alph2*log(x1+alpx1)
-                freq.append(abs(dum-(x2*alpx2+alph2*log(x2+alpx2))))
+                alpx1 = np.sqrt(alph2+x12)
+                alpx2 = np.sqrt(alph2+x22)
+                dum   = x1*alpx1+alph2*np.log(x1+alpx1)
+                freq[i]=abs(dum-(x2*alpx2+alph2*np.log(x2+alpx2)))
             else :
-                almx1 = sqrt(alph2-x12)
-                almx2 = sqrt(alph2-x22)
-                dum   = x1*almx1+alph2*asin(x1/alph)
-                freq.append(abs(dum-(x2*almx2+alph2*asin(x2/alph))))
-    sum0 = sum(freq)
-    lidf=[]
+                almx1 = np.sqrt(alph2-x12)
+                almx2 = np.sqrt(alph2-x22)
+                dum   = x1*almx1+alph2*np.arcsin(x1/alph)
+                freq[i]=abs(dum-(x2*almx2+alph2*np.arcsin(x2/alph)))
+    sum0 = np.sum(freq)
+    lidf=np.zeros(n_elements)
     for i in range(n_elements):
-        lidf.append(float(freq[i])/sum0)
+        lidf[i] = freq[i]/sum0
     
     return lidf
-
 
 
 def foursail (rho, tau, lidfa, lidfb, lidftype, lai, hotspot, 
@@ -419,9 +424,9 @@ def foursail (rho, tau, lidfa, lidfb, lidftype, lai, hotspot,
         define_geometric_constants(tts, tto, psi)
     # Calcualte leaf angle distribution
     if lidftype == 1:
-        lidf = verhoef_bimodal(lidfa, lidfb)
+        lidf = verhoef_bimodal(lidfa, lidfb, n_elements=18)
     elif lidftype == 2:
-        lidf = ellipsoidal(lidfa)
+        lidf = campbell(lidfa, n_elements=18)
     else:
         raise ValueError, \
             "lidftype can only be 1 (Campbell) or 2 (ellipsoidal)"
@@ -433,12 +438,7 @@ def foursail (rho, tau, lidfa, lidfb, lidftype, lai, hotspot,
     sob=0.
     sof=0.
 
-    try:
-        ks, ko, bf, sob, sof = cweighted_sum_over_lidf(lidf, tts, tto, psi, 
-                                                       cts, cto, ctscto)
-    except:
-        ks, ko, bf, sob, sof = weighted_sum_over_lidf(lidf, tts, tto, psi, 
-                                                       cts, cto, ctscto)
+    ks, ko, bf, sob, sof = weighted_sum_over_lidf(lidf, tts, tto, psi)
 
 
     # Geometric factors to be used later with rho and tau
