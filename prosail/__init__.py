@@ -1,44 +1,58 @@
-import numpy as np
-from prosail_fortran import run_sailf as sail
-from prosail_fortran import run_prosailf as prosail
-from prosail_fortran import prospect_5b
-from prospect_d import prospect_d
-from prosail_fortran import mod_dataspec_p5b as spectral_libs
-
+#!/usr/bin/env python
+from collections import namedtuple
 import pkgutil
 from StringIO import StringIO
 
-def run_prospect(n, cab, car,  cbrown, cw, cm, ant=0.0, 
-                 prospect_version="D",  
-                 nr=None, kab=None, kcar=None, kbrown=None, kw=None, 
-                 km=None, kant=None, alpha=40.):
-    if prospect_version == "5":
-        # Call the original PROSPECT-5. In case the user has supplied 
-        # spectra, use them.
-        wv, refl, trans = prospect_d (n, cab, car, cbrown, cw, cm, 0.0,
-                    spectral_libs.refractive if nr is None else nr,
-                    spectral_libs.k_cab if kab is None else kab,
-                    spectral_libs.k_car if kcar is None else kcar,
-                    spectral_libs.k_brown if kbrown is None else kbrown, 
-                    spectral_libs.k_cw if kw is None else kw,
-                    spectral_libs.k_cm if km is None else km,
-                    np.zeros_like(spectral_libs.k_cm), 
-                    alpha=alpha)
-    elif prospect_version.upper() == "D":
-        prospect_d_spectra = pkgutil.get_data('prosail', 'prospect_d_spectra.txt')
-        d = np.loadtxt( StringIO(prospect_d_spectra))
-        wv, refl, trans = prospect_d (n, cab, car, cbrown, cw, cm, ant,
-                                d[:,1] if nr is None else nr,
-                                d[:,2] if kab is None else kab,
-                                d[:,3] if kcar is None else kcar,
-                                d[:,5] if kbrown is None else kbrown,
-                                d[:,6] if kw is None else kw,
-                                d[:,7] if km is None else km,
-                                d[:,4] if kant is None else kant, alpha=alpha)
-    else:
-        raise ValueError("prospect_version can only be 5 or D!")
+import numpy as np
+from prospect_d import run_prospect
 
-    return wv, refl, trans
+Spectra = namedtuple('Spectra', 'prospect5 prospectd soil light')
+Prospect5Spectra = namedtuple('Prospect5Spectra', 
+                                'nr kab kcar kbrown kw km')
+ProspectDSpectra = namedtuple('ProspectDSpectra', 
+                                'nr kab kcar kbrown kw km kant')
+SoilSpectra = namedtuple("SoilSpectra", "rsoil1 rsoil2")
+LightSpectra = namedtuple("LightSpectra", "es ed")
+
+spectral_lib = get_spectra()
+
+def get_spectra():
+    """Reads the spectral information and stores is for future use."""
+
+    # PROSPECT-D
+    prospect_d_spectraf = pkgutil.get_data('prosail', 'prospect_d_spectra.txt')
+    d = np.loadtxt( StringIO(prospect_d_spectraf))
+    nr = d[:, 1]
+    kab = d[:, 2]
+    kcar = d[:, 3]
+    kbrown = d[:, 5]
+    kw = d[:, 6]
+    km = d[:, 7]
+    kant = d[:, 4]
+    prospect_d_spectra = ProspectDSpectra(nr, kab, kcar, kbrown, kw, km, kant)
+    # PROSPECT 5
+    prospect_5_spectraf = pkgutil.get_data('prosail', 'prospect5_spectra.txt')
+    nr, kab, kcar, kbrown, kw, km =  np.loadtxt(StringIO(prospect_5_spectraf), 
+                                                unpack=True)
+    prospect_5_spectra = Prospect5Spectra(nr, kab, kcar, kbrown, kw, km)
+    # SOIL
+    soil_spectraf = pkgutil.get_data('prosail', 'soil_reflectance.txt')
+    rsoil1, rsoil2 =  np.loadtxt(StringIO(soil_spectraf), 
+                                                unpack=True)
+    soil_spectra = SoilSpectra(rsoil1, rsoil2)    
+    # LIGHT
+    light_spectraf = pkgutil.get_data('prosail', 'light_spectra.txt')
+    es, ed =  np.loadtxt(StringIO(light_spectraf), 
+                                                unpack=True)
+    light_spectra = LightSpectra(es, ed)
+    spectra = Spectra(prospect_d_spectra, prospect_5_spectra, 
+                      soil_spectra, light_spectra)
+    return spectra
+    
+    
+    
+
+
 
 def run_prosail(n, cab, car,  cbrown, cw, cm, lai, lidfa, hspot,
                 tts, tto, psi, ant=0.0, alpha=40., prospect_version="5", 
@@ -137,23 +151,10 @@ def run_prosail(n, cab, car,  cbrown, cw, cm, lai, lidfa, hspot,
         rsoil0 = rsoil * (
         psoil * soil_spectrum1 + (1. - psoil) * soil_spectrum2)
 
-    if prospect_version == "5":
-        wv, refl, trans = prospect_d (n, cab, car, cbrown, cw, cm, 0.0,
-                                      spectral_libs.refractive,
-                                      spectral_libs.k_cab, spectral_libs.k_car,
-                                      spectral_libs.k_brown, 
-                                      spectral_libs.k_cw, spectral_libs.k_cm,
-                                      np.zeros_like(spectral_libs.k_cm), 
-                                      alpha=alpha)
-    elif prospect_version.upper() == "D":
-        prospect_d_spectra = pkgutil.get_data('prosail', 'prospect_d_spectra.txt')
-        d = np.loadtxt( StringIO(prospect_d_spectra))
-        wv, refl, trans = prospect_d (n, cab, car, cbrown, cw, cm, ant,
-                                d[:,1], d[:,2], d[:,3], d[:,5], d[:,6], 
-                                d[:,7], d[:,4], alpha=alpha)
-
-    else:
-        raise ValueError("prospect_version can only be 5 or D!")
+    wv, refl, trans = run_prospect (n, cab, car,  cbrown, cw, cm, ant=ant, 
+                 prospect_version=prospect_version,  
+                 nr=nr, kab=kab, kcar=kcar, kbrown=kbrown, kw=kw, 
+                 km=km, kant=kant, alpha=alpha)
     
     rho = sail(refl, trans, lai, lidfa, lidfb, rsoil0, hspot, tts, tto, psi,
                typelidf)
