@@ -6,8 +6,8 @@ Versions 5 and D
 from numba import jit
 import numpy as np
 from scipy.special import expi
-import matplotlib.pyplot as plt
 
+from prosail import spectral_lib
 
 def run_prospect(n, cab, car,  cbrown, cw, cm, ant=0.0, 
                  prospect_version="D",  
