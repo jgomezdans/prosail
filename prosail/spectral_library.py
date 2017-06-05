@@ -1,25 +1,21 @@
 #!/usr/bin/env python
 """Spectral libraries for PROSPECT + SAIL
 """
-from collections import namedtuple
 import pkgutil
 from StringIO import StringIO
 
 import numpy as np
+
+from prosail import Spectra, ProspectDSpectra, Prospect5Spectra
+from prosail import SoilSpectra, LightSpectra
 
 def get_spectra():
     """Reads the spectral information and stores is for future use."""
 
     # PROSPECT-D
     prospect_d_spectraf = pkgutil.get_data('prosail', 'prospect_d_spectra.txt')
-    d = np.loadtxt( StringIO(prospect_d_spectraf))
-    nr = d[:, 1]
-    kab = d[:, 2]
-    kcar = d[:, 3]
-    kbrown = d[:, 5]
-    kw = d[:, 6]
-    km = d[:, 7]
-    kant = d[:, 4]
+    _, nr, kab, kcar, kant, kbrown, kw, m= np.loadtxt( 
+        StringIO(prospect_d_spectraf), unpack=True)
     prospect_d_spectra = ProspectDSpectra(nr, kab, kcar, kbrown, kw, km, kant)
     # PROSPECT 5
     prospect_5_spectraf = pkgutil.get_data('prosail', 'prospect5_spectra.txt')
