@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 from math import cos, asin,tan, log, exp, sqrt, radians
-    
+
 
 try:
     from functools import lru_cache
@@ -16,7 +16,7 @@ import numba
 def volscatt(tts,tto,psi,ttl) :
     '''Compute volume scattering functions and interception coefficients
     for given solar zenith, viewing zenith, azimuth and leaf inclination angle.
-    
+
     Parameters
     ----------
     tts : float
@@ -27,9 +27,9 @@ def volscatt(tts,tto,psi,ttl) :
         View-Sun reliative azimuth angle (degrees).
     ttl : float
         leaf inclination angle (degrees).
-    
+
     Returns
-    -------    
+    -------
     chi_s : float
         Interception function  in the solar path.
     chi_o : float
@@ -38,7 +38,7 @@ def volscatt(tts,tto,psi,ttl) :
         Function to be multiplied by leaf reflectance to obtain the volume scattering.
     ftau : float
         Function to be multiplied by leaf transmittance to obtain the volume scattering.
-    
+
     References
     ----------
     Wout Verhoef, april 2001, for CROMA.
@@ -56,12 +56,12 @@ def volscatt(tts,tto,psi,ttl) :
     cs = cttl*cts
     co = cttl*cto
     ss = sttl*sts
-    so = sttl*sto  
+    so = sttl*sto
     cosbts = 5.
-    if np.abs(ss) > 1e-6 : 
+    if np.abs(ss) > 1e-6 :
         cosbts = -cs/ss
     cosbto = 5.
-    if np.abs(so) > 1e-6 : 
+    if np.abs(so) > 1e-6 :
         cosbto = -co/so
     if np.abs(cosbts) < 1.0:
         bts = np.arccos(cosbts)
@@ -97,16 +97,16 @@ def volscatt(tts,tto,psi,ttl) :
             bt3 = psir
     t1 = 2.*cs*co+ss*so*cospsi
     t2 = 0.
-    if bt2 > 0.: 
+    if bt2 > 0.:
         t2 = np.sin(bt2)*(2.*ds*do_+ss*so*np.cos(bt1)*np.cos(bt3))
     denom=2.*np.pi**2
     frho = ((np.pi-bt2)*t1+t2)/denom
     ftau = (-bt2*t1+t2)/denom
-    if frho < 0. : 
+    if frho < 0. :
         frho=0.
-    if ftau < 0. : 
+    if ftau < 0. :
         ftau=0.
-   
+
     return (chi_s,chi_o,frho,ftau)
 
 
@@ -122,7 +122,7 @@ def weighted_sum_over_lidf (lidf, tts, tto, psi):
     cts   = np.cos(np.radians(tts))
     cto   = np.cos(np.radians(tto))
     ctscto  = cts*cto
-    
+
     n_angles=len(lidf)
     angle_step=float(90.0/n_angles)
     litab = np.arange(n_angles)*angle_step + (angle_step*0.5)
@@ -181,7 +181,7 @@ def hotspot_calculations(alf, lai, ko, ks ):
         y1 = y2
         f1 = f2
     tsstoo = f1
-    if np.isnan(sumint) : 
+    if np.isnan(sumint) :
         sumint=0.
     return tsstoo, sumint
 
@@ -193,7 +193,7 @@ def Jfunc1(k,l,t) :
         result=np.zeros(nb)
         result[np.abs(del_) > 1e-3] = (np.exp(-l[np.abs(del_)> 1e-3]*t)-
                                   np.exp(-k*t))/(k-l[np.abs(del_)> 1e-3])
-        result[np.abs(del_) <= 1e-3] = 0.5*t*(np.exp(-k*t) + 
+        result[np.abs(del_) <= 1e-3] = 0.5*t*(np.exp(-k*t) +
                                     np.exp(-l[np.abs(del_)<= 1e-3]*t))* \
                                     (1.-(del_[np.abs(del_)<= 1e-3]**2.)/12.)
     else:
@@ -207,10 +207,10 @@ def Jfunc2(k,l,t) :
     '''J2 function.'''
     return (1.-np.exp(-(k+l)*t))/(k+l)
 
-@numba.jit('f8[:](f8,f8,i8)', 
+@numba.jit('f8[:](f8,f8,i8)',
            nopython=True, cache=True)
-def verhoef_binomial(a,b,n_elements=18):
-    '''Calculate the Leaf Inclination Distribution Function based on the 
+def verhoef_bimodal(a,b,n_elements=18):
+    '''Calculate the Leaf Inclination Distribution Function based on the
     Verhoef's bimodal LIDF distribution.
     Parameters
     ----------
@@ -218,7 +218,7 @@ def verhoef_binomial(a,b,n_elements=18):
         controls the average leaf slope.
     b : float
         controls the distribution's bimodality.
-        
+
             * LIDF type     [a,b].
             * Planophile    [1,0].
             * Erectophile   [-1,0].
@@ -226,19 +226,19 @@ def verhoef_binomial(a,b,n_elements=18):
             * Extremophile  [0,1].
             * Spherical     [-0.35,-0.15].
             * Uniform       [0,0].
-            * requirement: |LIDFa| + |LIDFb| < 1.	
+            * requirement: |LIDFa| + |LIDFb| < 1.
     n_elements : int
         Total number of equally spaced inclination angles.
-    
+
     Returns
     -------
     lidf : list
         Leaf Inclination Distribution Function at equally spaced angles.
-    
+
     References
     ----------
-    .. [Verhoef1998] Verhoef, Wout. Theory of radiative transfer models applied 
-        in optical remote sensing of vegetation canopies. 
+    .. [Verhoef1998] Verhoef, Wout. Theory of radiative transfer models applied
+        in optical remote sensing of vegetation canopies.
         Nationaal Lucht en Ruimtevaartlaboratorium, 1998.
         http://library.wur.nl/WebQuery/clc/945481.
         '''
@@ -275,7 +275,7 @@ def verhoef_binomial(a,b,n_elements=18):
 @numba.jit('f8[:](f8,i8)',
            nopython=True, cache=True)
 def campbell(alpha,n_elements=18):
-    '''Calculate the Leaf Inclination Distribution Function based on the 
+    '''Calculate the Leaf Inclination Distribution Function based on the
     mean angle of [Campbell1990] ellipsoidal LIDF distribution.
     Parameters
     ----------
@@ -283,25 +283,25 @@ def campbell(alpha,n_elements=18):
         Mean leaf angle (degrees) use 57 for a spherical LIDF.
     n_elements : int
         Total number of equally spaced inclination angles .
-    
+
     Returns
     -------
     lidf : list
         Leaf Inclination Distribution Function for 18 equally spaced angles.
-        
+
     References
     ----------
-    .. [Campbell1986] G.S. Campbell, Extinction coefficients for radiation in 
-        plant canopies calculated using an ellipsoidal inclination angle distribution, 
-        Agricultural and Forest Meteorology, Volume 36, Issue 4, 1986, Pages 317-321, 
+    .. [Campbell1986] G.S. Campbell, Extinction coefficients for radiation in
+        plant canopies calculated using an ellipsoidal inclination angle distribution,
+        Agricultural and Forest Meteorology, Volume 36, Issue 4, 1986, Pages 317-321,
         ISSN 0168-1923, http://dx.doi.org/10.1016/0168-1923(86)90010-9.
-    .. [Campbell1990] G.S Campbell, Derivation of an angle density function for 
-        canopies with ellipsoidal leaf angle distributions, 
-        Agricultural and Forest Meteorology, Volume 49, Issue 3, 1990, Pages 173-176, 
+    .. [Campbell1990] G.S Campbell, Derivation of an angle density function for
+        canopies with ellipsoidal leaf angle distributions,
+        Agricultural and Forest Meteorology, Volume 49, Issue 3, 1990, Pages 173-176,
         ISSN 0168-1923, http://dx.doi.org/10.1016/0168-1923(90)90030-A.
     '''
-    
-    
+
+
     alpha=float(alpha)
     excent=exp(-1.6184e-5*alpha**3.+2.1145e-3*alpha**2.-1.2390e-1*alpha+3.2491)
     sum0 = 0.
@@ -333,11 +333,11 @@ def campbell(alpha,n_elements=18):
     lidf=np.zeros(n_elements)
     for i in range(n_elements):
         lidf[i] = freq[i]/sum0
-    
+
     return lidf
 
 
-def foursail (rho, tau, lidfa, lidfb, lidftype, lai, hotspot, 
+def foursail (rho, tau, lidfa, lidfb, lidftype, lai, hotspot,
     tts, tto, psi, rsoil):
     """
     Parameters
@@ -364,7 +364,7 @@ def foursail (rho, tau, lidfa, lidfb, lidftype, lai, hotspot,
         Relative Sensor-Sun Azimuth Angle (degrees).
     rsoil : array_like
         soil lambertian reflectance.
-    
+
     Returns
     -------
     tss : array_like
@@ -377,7 +377,7 @@ def foursail (rho, tau, lidfa, lidfb, lidftype, lai, hotspot,
         canopy bihemisperical reflectance factor.
     tdd : array_like
         canopy bihemishperical transmittance factor.
-    rsd : array_like 
+    rsd : array_like
         canopy directional-hemispherical reflectance factor.
     tsd : array_like
         canopy directional-hemispherical transmittance factor.
@@ -409,7 +409,7 @@ def foursail (rho, tau, lidfa, lidfb, lidftype, lai, hotspot,
         'Thermal gamma factor'.
     gammaso : array_like
         'Thermal gamma factor'.
-    
+
     References
     ----------
     .. [Verhoef2007] Verhoef, W.; Jia, Li; Qing Xiao; Su, Z., (2007) Unified Optical-Thermal
@@ -430,7 +430,7 @@ def foursail (rho, tau, lidfa, lidfb, lidftype, lai, hotspot,
     else:
         raise ValueError, \
             "lidftype can only be 1 (Campbell) or 2 (ellipsoidal)"
-    #Calculate geometric factors associated with extinction and scattering 
+    #Calculate geometric factors associated with extinction and scattering
     #Initialise sums
     ks=0.
     ko=0.
@@ -448,8 +448,8 @@ def foursail (rho, tau, lidfa, lidfb, lidftype, lai, hotspot,
     dof = 0.5*(ko - bf)
     ddb = 0.5*(1.0 + bf)
     ddf = 0.5*(1.0 - bf)
-    
-    
+
+
     sigb=ddb*rho+ddf*tau
     sigf=ddf*rho+ddb*tau
     if len(sigf)>1:
@@ -466,7 +466,7 @@ def foursail (rho, tau, lidfa, lidfb, lidftype, lai, hotspot,
     vb = dob*rho+dof*tau
     vf = dof*rho+dob*tau
     w = sob*rho+sof*tau
-    
+
     if lai<=0:
         # No canopy...
         tss = 1
@@ -490,10 +490,10 @@ def foursail (rho, tau, lidfa, lidfb, lidftype, lai, hotspot,
         gammasdf=0
         gammaso=0
         gammasdb=0
-        
+
         return [tss,too,tsstoo,rdd,tdd,rsd,tsd,rdo,tdo,
             rso,rsos,rsod,rddt,rsdt,rdot,rsodt,rsost,rsot,gammasdf,gammasdb,gammaso]
-            
+
     e1 = np.exp(-m*lai)
     e2 = e1**2.
     rinf = (att-m)/sigb
@@ -537,18 +537,15 @@ def foursail (rho, tau, lidfa, lidfb, lidftype, lai, hotspot,
     #Treatment of the hotspot-effect
     alf=1e36
     # Apply correction 2/(K+k) suggested by F.-M. Breon
-    if hotspot > 0. : 
+    if hotspot > 0. :
         alf=(dso/hotspot)*2./(ks+ko)
-    if alf == 0. : 
+    if alf == 0. :
         # The pure hotspot
         tsstoo = tss
         sumint=(1.-tss)/(ks*lai)
     else :
         # Outside the hotspot
-        try:
-            tsstoo, sumint = chotspot_calculations(alf, lai, ko, ks)
-        except: 
-            tsstoo, sumint = hotspot_calculations(alf, lai, ko, ks)
+        tsstoo, sumint = hotspot_calculations(alf, lai, ko, ks)
 
     # Bidirectional reflectance
     # Single scattering contribution
@@ -569,7 +566,7 @@ def foursail (rho, tau, lidfa, lidfb, lidftype, lai, hotspot,
     rsodt=((tss+tsd)*tdo+(tsd+tss*rsoil*rdd)*too)*rsoil/dn
     rsost=rso+tsstoo*rsoil
     rsot=rsost+rsodt
-    
+
     return [tss,too,tsstoo,rdd,tdd,rsd,tsd,rdo,tdo,
           rso,rsos,rsod,rddt,rsdt,rdot,rsodt,rsost,rsot,gammasdf,gammasdb,gammaso]
 
