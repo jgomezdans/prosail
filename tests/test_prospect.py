@@ -1,8 +1,11 @@
 import numpy as np
+from scipy.io import loadmat
 import os
-from prosail import run_prospect
+import prosail
 from pytest import fixture
 from distutils import dir_util
+
+from prosail.prospect_d import calctav
 
 
 @fixture
@@ -31,7 +34,7 @@ def test_reflectance_prospect5(datadir):
     w, true_refl, true_trans = np.loadtxt(fname,
              unpack=True)
 
-    w, refl, trans = run_prospect(2.1, 40, 10., 0.1, 
+    w, refl, trans = prosail.run_prospect(2.1, 40, 10., 0.1, 
                 0.015, 0.009, prospect_version="5")
     assert np.allclose( true_refl, refl, atol=1e-4)
 
@@ -41,8 +44,26 @@ def test_transmittance_prospect5(datadir):
     w, true_refl, true_trans = np.loadtxt(fname,
             unpack=True)
 
-    w, refl, trans = run_prospect(2.1, 40, 10., 0.1, 
+    w, refl, trans = prosail.run_prospect(2.1, 40, 10., 0.1, 
                 0.015, 0.009, prospect_version="5")
     assert np.allclose( true_trans, trans, atol=1e-4)
-
-
+    
+def test_calctav_prospectd(datadir):
+    fname = datadir("tav_alpha40.mat")
+    tav_mtlab = loadmat(fname)['tav'].squeeze()
+    tav_py = calctav(40, prosail.spectral_lib.prospectd.nr)
+    assert np.allclose(tav_mtlab, tav_py, atol=1.e-4)
+    
+def test_reflectance_prospectd(datadir):
+    fname = datadir("prospect_d_test.mat")
+    refl_mtlab = loadmat(fname)['LRT'][:,1]
+    w, refl, trans = prosail.run_prospect(1.2, 30, 10., 0.0, 
+                0.015, 0.009, ant=1., prospect_version="D")
+    assert np.allclose(refl_mtlab, refl, atol=1.e-4)
+    
+def test_transmittance_prospectd(datadir):
+    fname = datadir("prospect_d_test.mat")
+    trans_mtlab = loadmat(fname)['LRT'][:,2]
+    w, refl, trans = prosail.run_prospect(1.2, 30, 10., 0.0, 
+                0.015, 0.009, ant=1., prospect_version="D")
+    assert np.allclose(trans_mtlab, trans, atol=1.e-4)
