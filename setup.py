@@ -37,5 +37,9 @@ if __name__ == "__main__":
         classifiers = classifiers,
         package_data={"prosail":["*.txt"]},
         include_package_data=True,
-        version="2.0.0",
+        install_requires=[
+            "numba",
+            "backports.functools_lru_cache",
+        ],
+        version="2.0.0alpha",
         packages=["prosail"])
