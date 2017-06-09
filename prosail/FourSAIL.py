@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-from math import cos, asin,tan, log, exp, sqrt, radians
+from math import  exp, radians
 
 
 try:
