@@ -7,6 +7,7 @@ from distutils import dir_util
 
 from prosail.prospect_d import calctav
 
+"blah blah"
 
 @fixture
 def datadir(tmpdir, request):
