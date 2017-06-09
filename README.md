@@ -13,6 +13,9 @@
 
 [![DOI](https://zenodo.org/badge/19469/jgomezdans/prosail.svg)](https://zenodo.org/badge/latestdoi/19469/jgomezdans/prosail)
 
+[![Build Status](https://travis-ci.org/jgomezdans/prosail.png)](https://travis-ci.org/jgomezdans/prosail)
+
+
 ## Description
 
 This repository contains the Python bindings to the PROSPECT and SAIL leaf and 
