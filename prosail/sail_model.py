@@ -247,11 +247,18 @@ def run_thermal_sail(lam,
     Hs = top / ( np.exp ( c2/(lam*tsoil_sunlit))-1.) # Sunlit soil
     Hsky = top / ( np.exp ( c2/(lam*t_atm))-1.)      # Sky emission
     
+    
     # Emissivity calculations
     if refl is not None and emv is None:
         emv = 1. - refl # Assuming absorption is 1
+    
     if rsoil is not None and ems is None:
         ems = 1. - rsoil
+    
+    if rsoil is None and ems is not None:
+        rsoil = 1. - ems
+    if refl is None and emv is not None:
+        refl = 1. - emv
     
     [tss, too, tsstoo, rdd, tdd, rsd, tsd, rdo, tdo,
          rso, rsos, rsod, rddt, rsdt, rdot, rsodt, rsost, rsot,

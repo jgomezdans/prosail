@@ -187,7 +187,10 @@ def hotspot_calculations(alf, lai, ko, ks ):
 
 def Jfunc1(k,l,t) :
     ''' J1 function with avoidance of singularity problem.'''
-    nb=len(l)
+    try:
+        nb=len(l)
+    except TypeError:
+        nb = 1
     del_=(k-l)*t
     if nb > 1:
         result=np.zeros(nb)
@@ -452,13 +455,12 @@ def foursail (rho, tau, lidfa, lidfb, lidftype, lai, hotspot,
 
     sigb=ddb*rho+ddf*tau
     sigf=ddf*rho+ddb*tau
-    if len(sigf)>1:
-        sigf[sigf == 0.0] = 1e-36
-        sigb[sigb == 0.0] = 1e-36
-    else:
+    try:
+        sigf[sigf == 0.0] = 1.e-36
+        sigb[sigb == 0.0] = 1.0e-36
+    except TypeError:
         sigf = max(1e-36, sigf)
         sigb = max(1e-36, sigb)
-
     att = 1.-sigf
     m = np.sqrt(att**2.- sigb**2.)
     sb = sdb*rho + sdf*tau
@@ -556,10 +558,10 @@ def foursail (rho, tau, lidfa, lidfb, lidftype, lai, hotspot,
     gammaso=gammasos+gammasod
     #Interaction with the soil
     dn=1.-rsoil*rdd
-    if len(dn)>1:
-        dn[dn < 1e-36]=1e-36
-    else:
-        dn=max(1e-36,dn)
+    try:
+        dn[ dn < 1e-36] = 1e-36
+    except TypeError:
+        dn = max ( 1e-36, dn)
     rddt=rdd+tdd*rsoil*tdd/dn
     rsdt=rsd+(tsd+tss)*rsoil*tdd/dn
     rdot=rdo+tdd*rsoil*(tdo+too)/dn
