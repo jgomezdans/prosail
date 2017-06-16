@@ -425,6 +425,7 @@ def foursail (rho, tau, lidfa, lidfb, lidftype, lai, hotspot,
     # Define some geometric constants.
     cts, cto, ctscto, tants, tanto, cospsi, dso = \
         define_geometric_constants(tts, tto, psi)
+
     # Calcualte leaf angle distribution
     if lidftype == 1:
         lidf = verhoef_bimodal(lidfa, lidfb, n_elements=18)

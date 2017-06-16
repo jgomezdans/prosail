@@ -232,8 +232,8 @@ def run_sail(refl, trans, lai, lidfa, hspot, tts, tto, psi,
 
 def run_thermal_sail(lam,  
                      tveg, tsoil, tveg_sunlit, tsoil_sunlit, t_atm, 
-                     lai, lidfa, hspot, rsoil, 
-                     tts, tto, psi,
+                     lai, lidfa, hspot,  
+                     tts, tto, psi, rsoil=None,
                      refl=None, emv=None, ems=None,
                      typelidf=2, lidfb=0):
     c1 = 3.741856E-16
