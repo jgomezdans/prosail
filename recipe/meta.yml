@@ -1,0 +1,32 @@
+package:
+  name: prosail
+  version: 2.0.0alpha
+  
+source:
+  git_tag: 2.0.0alpha
+  git_url: https://github.com/tpn/faker.git
+
+requirements:
+  build:
+    - python
+    - setuptools
+    - numpy
+    - scipy
+    - backports.functools_lru_cache
+    - numba
+
+  run:
+    - python
+    - numpy
+    - scipy
+    - backports.functools_lru_cache
+    - numba
+
+test:
+  imports:
+    - prosail
+
+about:
+  home: http://github.com/jgomezdans/prosail
+  license: GPL
+  summary: "The PROSPECT and SAIL radiative transfer models"
