@@ -2,5 +2,5 @@
 
 set -e # Abort on error
 
-python setup.py install
+$PYTHON setup.py install
 
