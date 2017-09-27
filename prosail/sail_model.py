@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import numpy as np
 
-from . import spectral_library
+from prosail import spectral_lib
 
 from .prospect_d import run_prospect
 from .FourSAIL import foursail
@@ -90,12 +90,12 @@ def run_prosail(n, cab, car,  cbrown, cw, cm, lai, lidfa, hspot,
     if soil_spectrum1 is not None:
         assert (len(soil_spectrum1) == 2101)
     else:
-        soil_spectrum1 = spectral_library.soil.rsoil1
+        soil_spectrum1 = spectral_lib.soil.rsoil1
 
     if soil_spectrum2 is not None:
         assert (len(soil_spectrum1) == 2101)
     else:
-        soil_spectrum2 = spectral_library.soil.rsoil2
+        soil_spectrum2 = spectral_lib.soil.rsoil2
 
     if rsoil0 is None:
         if (rsoil is None) or (psoil is None):
@@ -200,12 +200,12 @@ def run_sail(refl, trans, lai, lidfa, hspot, tts, tto, psi,
     if soil_spectrum1 is not None:
         assert (len(soil_spectrum1) == 2101)
     else:
-        soil_spectrum1 = spectral_library.soil.rsoil1
+        soil_spectrum1 = spectral_lib.soil.rsoil1
 
     if soil_spectrum2 is not None:
         assert (len(soil_spectrum1) == 2101)
     else:
-        soil_spectrum2 = spectral_library.soil.rsoil2
+        soil_spectrum2 = spectral_lib.soil.rsoil2
 
     if rsoil0 is None:
         if (rsoil is None) or (psoil is None):
