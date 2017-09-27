@@ -432,8 +432,9 @@ def foursail (rho, tau, lidfa, lidfb, lidftype, lai, hotspot,
     elif lidftype == 2:
         lidf = campbell(lidfa, n_elements=18)
     else:
-        raise ValueError, \
+        raise ValueError(
             "lidftype can only be 1 (Campbell) or 2 (ellipsoidal)"
+        )
     #Calculate geometric factors associated with extinction and scattering
     #Initialise sums
     ks=0.
