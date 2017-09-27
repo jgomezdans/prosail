@@ -3,8 +3,8 @@ import numpy as np
 
 from prosail import spectral_lib
 
-from prospect_d import run_prospect
-from FourSAIL import foursail
+from .prospect_d import run_prospect
+from .FourSAIL import foursail
 
 def run_prosail(n, cab, car,  cbrown, cw, cm, lai, lidfa, hspot,
                 tts, tto, psi, ant=0.0, alpha=40., prospect_version="5", 
@@ -84,8 +84,9 @@ def run_prosail(n, cab, car,  cbrown, cw, cm, lai, lidfa, hspot,
 
     factor = factor.upper()
     if factor not in ["SDR", "BHR", "DHR", "HDR", "ALL"]:
-        raise ValueError, "'factor' must be one of SDR, BHR, DHR, HDR or ALL"
-
+        raise ValueError(
+            "'factor' must be one of SDR, BHR, DHR, HDR or ALL"
+        )
     if soil_spectrum1 is not None:
         assert (len(soil_spectrum1) == 2101)
     else:
@@ -98,8 +99,10 @@ def run_prosail(n, cab, car,  cbrown, cw, cm, lai, lidfa, hspot,
 
     if rsoil0 is None:
         if (rsoil is None) or (psoil is None):
-            raise ValueError, "If rsoil0 isn't define, then rsoil and psoil" + \
-                              " need to be defined!"
+            raise ValueError(
+                "If rsoil0 isn't define, then rsoil and psoil"
+                " need to be defined!"
+            )
         rsoil0 = rsoil * (
         psoil * soil_spectrum1 + (1. - psoil) * soil_spectrum2)
 
@@ -191,8 +194,9 @@ def run_sail(refl, trans, lai, lidfa, hspot, tts, tto, psi,
 
     factor = factor.upper()
     if factor not in ["SDR", "BHR", "DHR", "HDR", "ALL"]:
-        raise ValueError, "'factor' must be one of SDR, BHR, DHR, HDR or ALL"
-
+        raise ValueError(
+            "'factor' must be one of SDR, BHR, DHR, HDR or ALL"
+        )
     if soil_spectrum1 is not None:
         assert (len(soil_spectrum1) == 2101)
     else:
@@ -205,8 +209,10 @@ def run_sail(refl, trans, lai, lidfa, hspot, tts, tto, psi,
 
     if rsoil0 is None:
         if (rsoil is None) or (psoil is None):
-            raise ValueError, "If rsoil0 isn't define, then rsoil and psoil" + \
-                              " need to be defined!"
+            raise ValueError(
+                "If rsoil0 isn't define, then rsoil and psoil"
+                " need to be defined!"
+            )
         rsoil0 = rsoil * (
         psoil * soil_spectrum1 + (1. - psoil) * soil_spectrum2)
 
