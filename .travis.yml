@@ -20,7 +20,7 @@ install:
   - source activate test
   - pip install -U codecov
   - if [[ "$TRAVIS_PYTHON_VERSION" == "2.7" ]]; then
-       pip install -U backports.functools_lru_cache
+       pip install -U backports.functools_lru_cache;
     fi
   - python setup.py install
   
