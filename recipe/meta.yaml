@@ -1,26 +1,24 @@
 package:
   name: prosail
-  version: 2.0.0alpha
+  version: v2.0.0
   
 source:
-  git_tag: 2.0.0alpha
+  git_tag: v2.0.0
   git_url: http://github.com/jgomezdans/prosail.git
 
 requirements:
   build:
-    - python
+    - python ==3.6
     - setuptools
     - numpy
     - scipy
-    - backports.functools_lru_cache
     - numba
     - pytest
 
   run:
-    - python
+    - python ==3.6
     - numpy
     - scipy
-    - backports.functools_lru_cache
     - numba
     - pytest
 
@@ -30,5 +28,5 @@ test:
 
 about:
   home: http://github.com/jgomezdans/prosail
-  license: 
+  license: GPLv3
   summary: "The PROSPECT and SAIL radiative transfer models"
