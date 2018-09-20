@@ -18,6 +18,15 @@
 [![Build Status](https://travis-ci.org/jgomezdans/prosail.png)](https://travis-ci.org/jgomezdans/prosail)
 
 
+## Install using Anaconda
+
+You should be able to easily install this using Anaconda (only tested on Linux!) with
+
+`conda install -c jgomezdans prosail`
+
+I **think** it might work on both Python 2.7 and 3.6. But I'm only a scientist, so expect car crashes!
+
+
 ## Description
 
 This repository contains the Python bindings to the PROSPECT and SAIL leaf and 
