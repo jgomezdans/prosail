@@ -52,6 +52,7 @@ setup(
         "scipy",
         "pytest",
     ],
-    version="2.0.1",
-    packages=["prosail"]
+    version="2.0.1-1",
+    packages=["prosail"],
+    zip_safe=False # Apparently needed for conda
 )
