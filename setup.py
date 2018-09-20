@@ -9,7 +9,7 @@ long_description = "The PROSPECT + SAILh radiative transfer models from Python"
 
 
 def read(filename):
-    with open(os.path.join(os.path.dirname(__file__), filename)) as f:
+    with open(os.path.join(os.path.dirname(__file__), filename), "rb") as f:
         return f.read().decode("utf-8")
 
 
@@ -52,6 +52,6 @@ setup(
         "scipy",
         "pytest",
     ],
-    version="2.0.0",
+    version="2.0.1",
     packages=["prosail"]
 )
