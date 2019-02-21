@@ -18,6 +18,11 @@
 
 [![Build Status](https://travis-ci.org/jgomezdans/prosail.png)](https://travis-ci.org/jgomezdans/prosail)
 
+[![Coverage Status](https://coveralls.io/repos/github/jgomezdans/prosail/badge.svg?branch=master)](https://coveralls.io/github/jgomezdans/prosail?branch=master)
+[![codecov](https://codecov.io/gh/jgomezdans/prosail/branch/master/graph/badge.svg?longCache=true&style=flat)](https://codecov.io/gh/jgomezdans/prosail)
+[![Anaconda-Server Badge](https://anaconda.org/jgomezdans/prosail/badges/version.svg)](https://anaconda.org/jgomezdans/prosail)
+[![PyPI version](https://badge.fury.io/py/prosail.svg)](https://badge.fury.io/py/prsoail)
+
 
 ## Install using Anaconda
 

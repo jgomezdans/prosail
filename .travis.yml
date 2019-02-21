@@ -19,10 +19,24 @@ install:
   - conda create -q -n test python=$TRAVIS_PYTHON_VERSION numpy numba scipy pytest pytest-cov coverage sphinx nose
   - source activate test
   - pip install -U codecov
+  - pip install coveralls
   - if [[ "$TRAVIS_PYTHON_VERSION" == "2.7" ]]; then
        pip install -U backports.functools_lru_cache;
     fi
   - python setup.py install
   
 script:
-  - pytest
+  - python -m pytest --cov 
+  - coverage xml
+  
+deploy:
+  provider: pypi
+  user: %PYPI_USER
+  password: $PYPI_PASS
+  on:
+      tags: true
+      branch: master
+
+after_success:
+    - codecov
+    - coveralls
