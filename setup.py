@@ -66,7 +66,6 @@ setup(
     author_email=author_email,
     classifiers=classifiers,
     package_data={"prosail": ["*.txt"]},
-    include_package_data=True,
     install_requires=[
         "numpy",
         "numba",
