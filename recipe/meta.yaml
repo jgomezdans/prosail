@@ -1,9 +1,9 @@
 package:
   name: prosail
-  version: 2.0.3
+  version: 2.0.4
   
 source:
-  git_tag: 2.0.3
+  git_tag: 2.0.4
   git_url: http://github.com/jgomezdans/prosail.git
 
 requirements:
