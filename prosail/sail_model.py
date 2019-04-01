@@ -65,6 +65,7 @@ def run_prosail(n, cab, car,  cbrown, cw, cm, lai, lidfa, hspot,
         * "DHR": Directional-Hemispherical r. f. (directional illumination)
         * "HDR": Hemispherical-Directional r. f. (directional view)
         * "ALL": All of them
+        * "ALLALL": All of the terms calculated by SAIL, including the above
     rsoil0: float, optional
         The soil reflectance spectrum
     rsoil: float, optional
@@ -83,9 +84,9 @@ def run_prosail(n, cab, car,  cbrown, cw, cm, lai, lidfa, hspot,
     """
 
     factor = factor.upper()
-    if factor not in ["SDR", "BHR", "DHR", "HDR", "ALL"]:
+    if factor not in ["SDR", "BHR", "DHR", "HDR", "ALL", "ALLALL"]:
         raise ValueError(
-            "'factor' must be one of SDR, BHR, DHR, HDR or ALL"
+            "'factor' must be one of SDR, BHR, DHR, HDR, ALL or ALLALL"
         )
     if soil_spectrum1 is not None:
         assert (len(soil_spectrum1) == 2101)
@@ -126,6 +127,10 @@ def run_prosail(n, cab, car,  cbrown, cw, cm, lai, lidfa, hspot,
         return rdot
     elif factor == "ALL":
         return [rsot, rddt, rsdt, rdot]
+    elif factor == "ALLALL":
+        return [tss, too, tsstoo, rdd, tdd, rsd, tsd, rdo, tdo,
+         rso, rsos, rsod, rddt, rsdt, rdot, rsodt, rsost, rsot,
+         gammasdf, gammasdb, gammaso]
 
 
 def run_sail(refl, trans, lai, lidfa, hspot, tts, tto, psi,
@@ -174,6 +179,7 @@ def run_sail(refl, trans, lai, lidfa, hspot, tts, tto, psi,
         * "DHR": Directional-Hemispherical r. f. (directional illumination)
         * "HDR": Hemispherical-Directional r. f. (directional view)
         * "ALL": All of them
+        * "ALLALL": All of the terms calculated by SAIL, including the above
     rsoil0: float, optional
         The soil reflectance spectrum
     rsoil: float, optional
@@ -193,9 +199,9 @@ def run_sail(refl, trans, lai, lidfa, hspot, tts, tto, psi,
     """
 
     factor = factor.upper()
-    if factor not in ["SDR", "BHR", "DHR", "HDR", "ALL"]:
+    if factor not in ["SDR", "BHR", "DHR", "HDR", "ALL", "ALLALL"]:
         raise ValueError(
-            "'factor' must be one of SDR, BHR, DHR, HDR or ALL"
+            "'factor' must be one of SDR, BHR, DHR, HDR, ALL or ALLALL"
         )
     if soil_spectrum1 is not None:
         assert (len(soil_spectrum1) == 2101)
@@ -234,6 +240,10 @@ def run_sail(refl, trans, lai, lidfa, hspot, tts, tto, psi,
         return rdot
     elif factor == "ALL":
         return [rsot, rddt, rsdt, rdot]
+    elif factor == "ALLALL":
+        return [tss, too, tsstoo, rdd, tdd, rsd, tsd, rdo, tdo,
+         rso, rsos, rsod, rddt, rsdt, rdot, rsodt, rsost, rsot,
+         gammasdf, gammasdb, gammaso]
 
 
 def run_thermal_sail(lam,  
