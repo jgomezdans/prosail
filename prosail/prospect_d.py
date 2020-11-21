@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 """The PROSPECT leaf optical properties model
-Versions 5 and D
+Versions 5, D and PRO
+
+Thanks for @jajberni for ProspectPRO implementation!
 
 """
 import numpy as np
@@ -12,7 +14,62 @@ def run_prospect(n, cab, car,  cbrown, cw, cm, ant=0.0, prot=0.0, cbc=0.0,
                  prospect_version="D",  
                  nr=None, kab=None, kcar=None, kbrown=None, kw=None, 
                  km=None, kant=None, kprot=None, kcbc=None, alpha=40.):
-    """The PROSPECT model, versions 5 and D"""
+    """The PROSPECT model, versions 5, D and PRO.
+    This function runs PROSPECT. You can select the version using the 
+    `prospect_version` argument, and you can also set some of the spectra
+    used for model calculations.
+    
+    Parameters
+    -----------
+    n: float
+        The number of leaf layers. Unitless [-].
+    cab: float
+        The chlorophyll a+b concentration. [g cm^{-2}].
+    car: float
+        Carotenoid concentration.  [g cm^{-2}].
+    cbrown: float
+        The brown/senescent pigment. Unitless [-], often between 0 and 1
+        but the literature on it is wide ranging!
+    cw: float
+        Equivalent leaf water. [cm]
+    ant: float, optional
+        Anthocyanins content. Used in Prospect-D and Prospect-PRO [g cm^{-2}]
+    prot: float, optional
+        Protein content. Used in Prospect-PRO. [g cm^{-2}]
+    cbc: float, optional
+        Carbon based constituents. Used in Prospect-PRO. [g cm^{-2}]
+    prospect_version: string, optiona, default "D".
+        The version of PROSPECT, "5", "D" or "PRO".
+    nr: array, optional
+        The refractive index of the leaf. If `None` (default), will use the
+        values for the selected PROPSECT version. [-].
+    kab: 2101-element array, optional
+        The specific absorption coefficient of chlorophyll (a+b) [cm^2 ug^{-1}].
+    kcar: 2101-element array, optional
+        The specific absorption coefficient of carotenoids [cm^2 ug^{-1}].
+    kbrown:  2101-element array, optional
+        The specific absorption coefficient of brown pigments (arbitrary units).
+    kw:  2101-element array, optional
+        The specific absorption coefficient of water (cm^{-1}).
+    km: 2101-element array, optional
+        The specific absorption coefficient of dry matter [cm^2 g^{-1}].
+    kant: 2101-element array, optional
+        The specific absorption coefficient of Anthocyanins [cm^2 nmol^{-1}].
+    kprot: 2101-element array, optional
+        The specific absorption coefficient of proteins [cm^2 g^{-1}].
+    kcbc: 2101-element array, optional
+        The specific absorption coefficient of carbon based constituents [cm^2 ug^{-1}].
+    alpha: float, optional, default 40..
+        Maximum incident angle relative to the normal of the leaf plane. [deg]
+
+
+    Returns
+    -------
+    
+    3 arrays of the size 2101: the wavelengths in [nm], the leaf reflectance
+    and transmittance.
+    
+    """
     
     if prospect_version == "5":
         # Call the original PROSPECT-5. In case the user has supplied 
