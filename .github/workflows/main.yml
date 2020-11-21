@@ -2,11 +2,12 @@ name: Run tests
 on: [push]
 
 jobs:
-  example-3:
-    name: Run on Linux
-    runs-on: ubuntu-latest
+  run-tests:
+    name: Runs on ${{ matrix.python-version }}, ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
     strategy:
       matrix:
+        os: ["ubuntu-latest", "macos-latest", "windows-latest"]
         python-version: [3.7, 3.8]
     defaults:
       run:
