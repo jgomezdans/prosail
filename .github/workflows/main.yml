@@ -18,11 +18,11 @@ jobs:
           python-version: ["3.7", "3.8"]
           auto-activate-base: false
       - name: Conda Info
-        - run: |
+      - run: |
           conda info
           conda list
-        - name: Lint
-        - run: |
+      - name: Lint
+      - run: |
             conda install flake8
             python -m flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
             python -m flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
