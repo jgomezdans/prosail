@@ -51,6 +51,8 @@ def run_prospect(
         but the literature on it is wide ranging!
     cw: float
         Equivalent leaf water. [cm]
+    cm: float
+        Dry matter [g cm^{-2}]
     ant: float, optional
         Anthocyanins content. Used in Prospect-D and Prospect-PRO [g cm^{-2}]
     prot: float, optional
