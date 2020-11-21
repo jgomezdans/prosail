@@ -21,6 +21,8 @@ def run_prosail(
     tto,
     psi,
     ant=0.0,
+    prot=0.0,
+    cbc=0.0,
     alpha=40.0,
     prospect_version="5",
     typelidf=2,
@@ -43,19 +45,20 @@ def run_prosail(
     between 400 and 2500 nm with 1nm spacing.
 
     Parameters
-    ----------
+    -----------
     n: float
-        Leaf layers
+        The number of leaf layers. Unitless [-].
     cab: float
-        leaf chlorophyll concentration
+        The chlorophyll a+b concentration. [g cm^{-2}].
     car: float
-        leaf carotenoid concentration
+        Carotenoid concentration.  [g cm^{-2}].
     cbrown: float
-        senescent pigment
+        The brown/senescent pigment. Unitless [-], often between 0 and 1
+        but the literature on it is wide ranging!
     cw: float
-        equivalent leaf water
+        Equivalent leaf water. [cm]
     cm: float
-        leaf dry matter
+        Dry matter [g cm^{-2}]
     lai: float
         leaf area index
     lidfa: float
@@ -67,13 +70,17 @@ def run_prosail(
         Sensor zenith angle
     psi: float
         Relative sensor-solar azimuth angle ( saa - vaa )
-    ant: float
-        leaf anthocyanin concentration (default set to 0)
+    ant: float, optional
+        Anthocyanins content. Used in Prospect-D and Prospect-PRO [g cm^{-2}]
+    prot: float, optional
+        Protein content. Used in Prospect-PRO. [g cm^{-2}]
+    cbc: float, optional
+        Carbon based constituents. Used in Prospect-PRO. [g cm^{-2}]
     alpha: float
         The alpha angle (in degrees) used in the surface scattering
         calculations. By default it's set to 40 degrees.
     prospect_version: str
-        Which PROSPECT version to use. We have "5" and "D"
+        Which PROSPECT version to use. We have "5", "D" and "PRO"
     typelidf: int, optional
         The type of leaf angle distribution function to use. By default, is set
         to 2.
@@ -137,6 +144,8 @@ def run_prosail(
         cw,
         cm,
         ant=ant,
+        prot=prot,
+        cbc=prot,
         prospect_version=prospect_version,
         alpha=alpha,
     )
