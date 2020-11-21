@@ -15,7 +15,7 @@ jobs:
           auto-update-conda: true
           activate-environment: prosail
           environment-file: environment.yml
-          python-version: ["3.7", "3.8"]
+          python-version: ["3.7"]
           auto-activate-base: false
       - name: Conda Info
         run: |
