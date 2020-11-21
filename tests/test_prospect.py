@@ -67,3 +67,19 @@ def test_transmittance_prospectd(datadir):
     w, refl, trans = prosail.run_prospect(1.2, 30, 10., 0.0, 
                 0.015, 0.009, ant=1., prospect_version="D")
     assert np.allclose(trans_mtlab, trans, atol=1.e-4)
+
+
+def test_reflectance_prospectpro(datadir):
+    fname = datadir("prospect_pro_test.txt")
+    w, refl_mtlab, trans_mtlab = np.loadtxt(fname, unpack=True)
+    w, refl, trans = prosail.run_prospect(n=1.2, cab=30, car=10., cbrown=0.0,
+                                          cw=0.015, cm=0.009, ant=1.0, prot=0.001, cbc=0.009, prospect_version="PRO")
+    assert np.allclose(refl_mtlab, refl, atol=1.e-4)
+
+
+def test_transmittance_prospectpro(datadir):
+    fname = datadir("prospect_pro_test.txt")
+    w, refl_mtlab, trans_mtlab = np.loadtxt(fname, unpack=True)
+    w, refl, trans = prosail.run_prospect(1.2, 30, 10., 0.0,
+                                          0.015, 0.009, ant=1., prot=0.001, cbc=0.009,  prospect_version="PRO")
+    assert np.allclose(trans_mtlab, trans, atol=1.e-4)

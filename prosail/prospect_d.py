@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 """The PROSPECT leaf optical properties model
-Versions 5 and D
+Versions 5, D and PRO
+
+Thanks for @jajberni for ProspectPRO implementation!
 
 """
 import numpy as np
@@ -8,16 +10,71 @@ from scipy.special import expi
 
 from prosail import spectral_lib
 
-def run_prospect(n, cab, car,  cbrown, cw, cm, ant=0.0, 
+def run_prospect(n, cab, car,  cbrown, cw, cm, ant=0.0, prot=0.0, cbc=0.0,
                  prospect_version="D",  
                  nr=None, kab=None, kcar=None, kbrown=None, kw=None, 
-                 km=None, kant=None, alpha=40.):
-    """The PROSPECT model, versions 5 and D"""
+                 km=None, kant=None, kprot=None, kcbc=None, alpha=40.):
+    """The PROSPECT model, versions 5, D and PRO.
+    This function runs PROSPECT. You can select the version using the 
+    `prospect_version` argument, and you can also set some of the spectra
+    used for model calculations.
+    
+    Parameters
+    -----------
+    n: float
+        The number of leaf layers. Unitless [-].
+    cab: float
+        The chlorophyll a+b concentration. [g cm^{-2}].
+    car: float
+        Carotenoid concentration.  [g cm^{-2}].
+    cbrown: float
+        The brown/senescent pigment. Unitless [-], often between 0 and 1
+        but the literature on it is wide ranging!
+    cw: float
+        Equivalent leaf water. [cm]
+    ant: float, optional
+        Anthocyanins content. Used in Prospect-D and Prospect-PRO [g cm^{-2}]
+    prot: float, optional
+        Protein content. Used in Prospect-PRO. [g cm^{-2}]
+    cbc: float, optional
+        Carbon based constituents. Used in Prospect-PRO. [g cm^{-2}]
+    prospect_version: string, optiona, default "D".
+        The version of PROSPECT, "5", "D" or "PRO".
+    nr: array, optional
+        The refractive index of the leaf. If `None` (default), will use the
+        values for the selected PROPSECT version. [-].
+    kab: 2101-element array, optional
+        The specific absorption coefficient of chlorophyll (a+b) [cm^2 ug^{-1}].
+    kcar: 2101-element array, optional
+        The specific absorption coefficient of carotenoids [cm^2 ug^{-1}].
+    kbrown:  2101-element array, optional
+        The specific absorption coefficient of brown pigments (arbitrary units).
+    kw:  2101-element array, optional
+        The specific absorption coefficient of water (cm^{-1}).
+    km: 2101-element array, optional
+        The specific absorption coefficient of dry matter [cm^2 g^{-1}].
+    kant: 2101-element array, optional
+        The specific absorption coefficient of Anthocyanins [cm^2 nmol^{-1}].
+    kprot: 2101-element array, optional
+        The specific absorption coefficient of proteins [cm^2 g^{-1}].
+    kcbc: 2101-element array, optional
+        The specific absorption coefficient of carbon based constituents [cm^2 ug^{-1}].
+    alpha: float, optional, default 40..
+        Maximum incident angle relative to the normal of the leaf plane. [deg]
+
+
+    Returns
+    -------
+    
+    3 arrays of the size 2101: the wavelengths in [nm], the leaf reflectance
+    and transmittance.
+    
+    """
     
     if prospect_version == "5":
         # Call the original PROSPECT-5. In case the user has supplied 
         # spectra, use them.
-        wv, refl, trans = prospect_d (n, cab, car, cbrown, cw, cm, 0.0,
+        wv, refl, trans = prospect_d (n, cab, car, cbrown, cw, cm, 0.0, 0.0, 0.0,
                     spectral_lib.prospect5.nr if nr is None else nr,
                     spectral_lib.prospect5.kab if kab is None else kab,
                     spectral_lib.prospect5.kcar if kcar is None else kcar,
@@ -25,10 +82,11 @@ def run_prospect(n, cab, car,  cbrown, cw, cm, ant=0.0,
                         if kbrown is None else kbrown, 
                     spectral_lib.prospect5.kw if kw is None else kw,
                     spectral_lib.prospect5.km if km is None else km,
-                    np.zeros_like(spectral_lib.prospect5.km), 
+                    np.zeros_like(spectral_lib.prospect5.km),
+                    np.zeros_like(spectral_lib.prospect5.km), np.zeros_like(spectral_lib.prospect5.km),
                     alpha=alpha)
     elif prospect_version.upper() == "D":
-        wv, refl, trans = prospect_d (n, cab, car, cbrown, cw, cm, ant,
+        wv, refl, trans = prospect_d (n, cab, car, cbrown, cw, cm, ant, 0.0, 0.0,
                     spectral_lib.prospectd.nr if nr is None else nr,
                     spectral_lib.prospectd.kab if kab is None else kab,
                     spectral_lib.prospectd.kcar if kcar is None else kcar,
@@ -36,7 +94,21 @@ def run_prospect(n, cab, car,  cbrown, cw, cm, ant=0.0,
                         if kbrown is None else kbrown,
                     spectral_lib.prospectd.kw if kw is None else kw,
                     spectral_lib.prospectd.km if km is None else km,
-                    spectral_lib.prospectd.kant if kant is None else kant, 
+                    spectral_lib.prospectd.kant if kant is None else kant,
+                    np.zeros_like(spectral_lib.prospect5.km), np.zeros_like(spectral_lib.prospect5.km),
+                                      alpha=alpha)
+    elif prospect_version.upper() == "PRO":
+        wv, refl, trans = prospect_d (n, cab, car, cbrown, cw, cm, ant, prot, cbc,
+                    spectral_lib.prospectpro.nr if nr is None else nr,
+                    spectral_lib.prospectpro.kab if kab is None else kab,
+                    spectral_lib.prospectpro.kcar if kcar is None else kcar,
+                    spectral_lib.prospectpro.kbrown \
+                        if kbrown is None else kbrown,
+                    spectral_lib.prospectpro.kw if kw is None else kw,
+                    spectral_lib.prospectpro.km if km is None else km,
+                    spectral_lib.prospectpro.kant if kant is None else kant,
+                    spectral_lib.prospectpro.kprot if kprot is None else kprot,
+                    spectral_lib.prospectpro.kcbc if kcbc is None else kcbc,
                     alpha=alpha)
     else:
         raise ValueError("prospect_version can only be 5 or D!")
@@ -113,19 +185,19 @@ def refl_trans_one_layer (alpha, nr, tau):
     
     return r, t, Ra, Ta, denom
 
-def prospect_d (N, cab, car, cbrown, cw, cm, ant,
-            nr, kab, kcar, kbrown, kw, km, kant,
+def prospect_d (N, cab, car, cbrown, cw, cm, ant, prot, cbc,
+            nr, kab, kcar, kbrown, kw, km, kant, kprot, kcbc,
             alpha=40.):
 
     lambdas = np.arange(400, 2501) # wavelengths
     n_lambdas = len(lambdas)
     n_elems_list = [len(spectrum)  for spectrum in 
-                [nr, kab, kcar, kbrown, kw, km, kant]]
+                [nr, kab, kcar, kbrown, kw, km, kant, kprot, kcbc]]
     if not all(n_elems == n_lambdas for n_elems in n_elems_list):
         raise ValueError("Leaf spectra don't have the right shape!")
     
     kall = (cab*kab + car*kcar + ant*kant + cbrown*kbrown +
-            cw*kw + cm*km)/N
+            cw*kw + cm*km + prot*kprot + cbc*kcbc)/N
     j = kall > 0
     t1 = (1-kall)*np.exp(-kall)
     t2 = kall**2*(-expi(-kall))
