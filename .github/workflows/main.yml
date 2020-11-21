@@ -9,8 +9,12 @@ jobs:
         matrix:
             os: ["ubuntu-latest", "macos-latest", "windows-latest"]
     steps:
+      - name: Checkout repo
       - uses: actions/checkout@v2
+      - name: Get miniconda 
       - uses: goanpeca/setup-miniconda@v1
+        env: ACTIONS_ALLOW_UNSECURE_COMMANDS
+      
         with:
           activate-environment: test
           environment-file: environment.yml
