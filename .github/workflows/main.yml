@@ -4,9 +4,9 @@ on: [push]
 jobs:
   example-3:
     name: Run on Linux
-    runs-on: "ubuntu-latest"
+    runs-on: ubuntu-latest
     strategy:
-    matrix:
+      matrix:
         python-version: [3.7, 3.8]
     defaults:
       run:
