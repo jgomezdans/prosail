@@ -1,11 +1,8 @@
 import numpy as np
-from scipy.io import loadmat
 import os
 import prosail
 from pytest import fixture
 from distutils import dir_util
-
-from prosail.prospect_d import calctav
 
 
 @fixture
