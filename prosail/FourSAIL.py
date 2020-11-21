@@ -110,7 +110,9 @@ def volscatt(tts, tto, psi, ttl):
 
 
 @numba.jit(
-    "Tuple((f8, f8, f8, f8, f8))(f8[:], f8, f8, f8)", nopython=True, cache=True
+    "Tuple((f8, f8, f8, f8, f8))(f8[:], f8, f8, f8)",
+    nopython=True,
+    cache=True,
 )
 def weighted_sum_over_lidf(lidf, tts, tto, psi):
     ks = 0.0

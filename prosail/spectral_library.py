@@ -23,7 +23,9 @@ def get_spectra():
     """Reads the spectral information and stores is for future use."""
 
     # PROSPECT-D
-    prospect_d_spectraf = pkgutil.get_data("prosail", "prospect_d_spectra.txt")
+    prospect_d_spectraf = pkgutil.get_data(
+        "prosail", "prospect_d_spectra.txt"
+    )
     _, nr, kab, kcar, kant, kbrown, kw, km = np.loadtxt(
         BytesIO(prospect_d_spectraf), unpack=True
     )
