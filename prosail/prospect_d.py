@@ -43,9 +43,9 @@ def run_prospect(
     n: float
         The number of leaf layers. Unitless [-].
     cab: float
-        The chlorophyll a+b concentration. [g cm^{-2}].
+        The chlorophyll a+b concentration. [ug cm^{-2}].
     car: float
-        Carotenoid concentration.  [g cm^{-2}].
+        Carotenoid concentration.  [ug cm^{-2}].
     cbrown: float
         The brown/senescent pigment. Unitless [-], often between 0 and 1
         but the literature on it is wide ranging!
@@ -54,11 +54,11 @@ def run_prospect(
     cm: float
         Dry matter [g cm^{-2}]
     ant: float, optional
-        Anthocyanins content. Used in Prospect-D and Prospect-PRO [g cm^{-2}]
+        Anthocyanins content. Used in Prospect-D and Prospect-PRO [ug cm^{-2}]
     prot: float, optional
         Protein content. Used in Prospect-PRO. [g cm^{-2}]
     cbc: float, optional
-        Carbon based constituents. Used in Prospect-PRO. [g cm^{-2}]
+        Carbon based constituents. Used in Prospect-PRO. [ug cm^{-2}]
     prospect_version: string, optiona, default "D".
         The version of PROSPECT, "5", "D" or "PRO".
     nr: array, optional
