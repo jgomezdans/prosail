@@ -132,6 +132,7 @@ def run_prosail(
                 "If rsoil0 isn't define, then rsoil and psoil"
                 " need to be defined!"
             )
+    else:
         rsoil0 = rsoil * (
             psoil * soil_spectrum1 + (1.0 - psoil) * soil_spectrum2
         )
@@ -312,6 +313,7 @@ def run_sail(
                 "If rsoil0 isn't define, then rsoil and psoil"
                 " need to be defined!"
             )
+    else:
         rsoil0 = rsoil * (
             psoil * soil_spectrum1 + (1.0 - psoil) * soil_spectrum2
         )
