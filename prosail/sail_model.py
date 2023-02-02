@@ -145,7 +145,7 @@ def run_prosail(
         cm,
         ant=ant,
         prot=prot,
-        cbc=prot,
+        cbc=cbc,
         prospect_version=prospect_version,
         alpha=alpha,
     )
