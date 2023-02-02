@@ -98,7 +98,7 @@ def volscatt(tts, tto, psi, ttl):
         t2 = np.sin(bt2) * (
             2.0 * ds * do_ + ss * so * np.cos(bt1) * np.cos(bt3)
         )
-    denom = 2.0 * np.pi ** 2
+    denom = 2.0 * np.pi**2
     frho = ((np.pi - bt2) * t1 + t2) / denom
     ftau = (-bt2 * t1 + t2) / denom
     if frho < 0.0:
@@ -139,7 +139,7 @@ def weighted_sum_over_lidf(lidf, tts, tto, psi):
         # Area scattering coefficient fractions
         sobli = frho * np.pi / ctscto
         sofli = ftau * np.pi / ctscto
-        bfli = cttl ** 2.0
+        bfli = cttl**2.0
         ks += ksli * float(lidf[i])
         ko += koli * float(lidf[i])
         bf += bfli * float(lidf[i])
@@ -156,7 +156,7 @@ def define_geometric_constants(tts, tto, psi):
     tants = np.tan(np.radians(tts))
     tanto = np.tan(np.radians(tto))
     cospsi = np.cos(np.radians(psi))
-    dso = np.sqrt(tants ** 2.0 + tanto ** 2.0 - 2.0 * tants * tanto * cospsi)
+    dso = np.sqrt(tants**2.0 + tanto**2.0 - 2.0 * tants * tanto * cospsi)
     return cts, cto, ctscto, tants, tanto, cospsi, dso
 
 
@@ -187,7 +187,7 @@ def hotspot_calculations(alf, lai, ko, ks):
 
 
 def Jfunc1(k, l, t):
-    """ J1 function with avoidance of singularity problem."""
+    """J1 function with avoidance of singularity problem."""
     try:
         nb = len(l)
     except TypeError:
@@ -212,7 +212,7 @@ def Jfunc1(k, l, t):
                 0.5
                 * t
                 * (np.exp(-k * t) + np.exp(-l * t))
-                * (1.0 - (del_ ** 2.0) / 12.0)
+                * (1.0 - (del_**2.0) / 12.0)
             )
     return result
 
@@ -315,8 +315,8 @@ def campbell(alpha, n_elements=18):
 
     alpha = float(alpha)
     excent = exp(
-        -1.6184e-5 * alpha ** 3.0
-        + 2.1145e-3 * alpha ** 2.0
+        -1.6184e-5 * alpha**3.0
+        + 2.1145e-3 * alpha**2.0
         - 1.2390e-1 * alpha
         + 3.2491
     )
@@ -326,15 +326,15 @@ def campbell(alpha, n_elements=18):
     for i in range(n_elements):
         tl1 = radians(i * step)
         tl2 = radians((i + 1.0) * step)
-        x1 = excent / (np.sqrt(1.0 + excent ** 2.0 * np.tan(tl1) ** 2.0))
-        x2 = excent / (np.sqrt(1.0 + excent ** 2.0 * np.tan(tl2) ** 2.0))
+        x1 = excent / (np.sqrt(1.0 + excent**2.0 * np.tan(tl1) ** 2.0))
+        x2 = excent / (np.sqrt(1.0 + excent**2.0 * np.tan(tl2) ** 2.0))
         if excent == 1.0:
             freq[i] = abs(np.cos(tl1) - np.cos(tl2))
         else:
-            alph = excent / np.sqrt(abs(1.0 - excent ** 2.0))
-            alph2 = alph ** 2.0
-            x12 = x1 ** 2.0
-            x22 = x2 ** 2.0
+            alph = excent / np.sqrt(abs(1.0 - excent**2.0))
+            alph2 = alph**2.0
+            x12 = x1**2.0
+            x22 = x2**2.0
             if excent > 1.0:
                 alpx1 = np.sqrt(alph2 + x12)
                 alpx2 = np.sqrt(alph2 + x22)
@@ -478,7 +478,7 @@ def foursail(
         sigf = max(1e-36, sigf)
         sigb = max(1e-36, sigb)
     att = 1.0 - sigf
-    m = np.sqrt(att ** 2.0 - sigb ** 2.0)
+    m = np.sqrt(att**2.0 - sigb**2.0)
     sb = sdb * rho + sdf * tau
     sf = sdf * rho + sdb * tau
     vb = dob * rho + dof * tau
@@ -534,9 +534,9 @@ def foursail(
         ]
 
     e1 = np.exp(-m * lai)
-    e2 = e1 ** 2.0
+    e2 = e1**2.0
     rinf = (att - m) / sigb
-    rinf2 = rinf ** 2.0
+    rinf2 = rinf**2.0
     re = rinf * e1
     denom = 1.0 - rinf2 * e2
     J1ks = Jfunc1(ks, m, lai)
@@ -602,7 +602,9 @@ def foursail(
     rddt = rdd + tdd * rsoil * tdd / dn
     rsdt = rsd + (tsd + tss) * rsoil * tdd / dn
     rdot = rdo + tdd * rsoil * (tdo + too) / dn
-    rsodt = ((tss + tsd) * tdo + (tsd + tss * rsoil * rdd) * too) * rsoil / dn
+    rsodt = (
+        (tss + tsd) * tdo + (tsd + tss * rsoil * rdd) * too
+    ) * rsoil / dn + rsod
     rsost = rso + tsstoo * rsoil
     rsot = rsost + rsodt
 
