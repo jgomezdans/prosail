@@ -131,7 +131,8 @@ def weighted_sum_over_lidf(lidf, tts, tto, psi):
     for i, ili in enumerate(litab):
         ttl = 1.0 * ili
         cttl = np.cos(np.radians(ttl))
-        # SAIL volume scattering phase function gives interception and portions to be multiplied by rho and tau
+        # SAIL volume scattering phase function gives interception and
+        # portions to be multiplied by rho and tau
         [chi_s, chi_o, frho, ftau] = volscatt(tts, tto, psi, ttl)
         # Extinction coefficients
         ksli = chi_s / cts
@@ -163,7 +164,9 @@ def define_geometric_constants(tts, tto, psi):
 @numba.jit("Tuple((f8,f8))(f8,f8,f8,f8)", nopython=True, cache=True)
 def hotspot_calculations(alf, lai, ko, ks):
     fhot = lai * np.sqrt(ko * ks)
-    # Integrate by exponential Simpson method in 20 steps the steps are arranged according to equal partitioning of the slope of the joint probability function
+    # Integrate by exponential Simpson method in 20 steps the steps are
+    # arranged according to equal partitioning of the slope of the
+    # joint probability function
     x1 = 0.0
     y1 = 0.0
     f1 = 1.0
@@ -393,7 +396,7 @@ def foursail(
     tsstoo : array_like
         beam tranmittance in the sur-target-view path.
     rdd : array_like
-        canopy bihemisperical reflectance factor.
+        canopy bihemispherical reflectance factor.
     tdd : array_like
         canopy bihemishperical transmittance factor.
     rsd : array_like
@@ -431,10 +434,11 @@ def foursail(
 
     References
     ----------
-    .. [Verhoef2007] Verhoef, W.; Jia, Li; Qing Xiao; Su, Z., (2007) Unified Optical-Thermal
-        Four-Stream Radiative Transfer Theory for Homogeneous Vegetation Canopies,
-        IEEE Transactions on Geoscience and Remote Sensing, vol.45, no.6, pp.1808-1822,
-        http://dx.doi.org/10.1109/TGRS.2007.895844 based on  in Verhoef et al. (2007).
+    .. [Verhoef2007] Verhoef, W.; Jia, Li; Qing Xiao; Su, Z., (2007) Unified Optical-
+        Thermal Four-Stream Radiative Transfer Theory for Homogeneous Vegetation
+        Canopies, IEEE Transactions on Geoscience and Remote Sensing, vol.45, no.6,
+        pp.1808-1822, http://dx.doi.org/10.1109/TGRS.2007.895844 based on
+        in Verhoef et al. (2007).
     """
 
     # Define some geometric constants.
