@@ -32,8 +32,8 @@ def calculate_fapar_albedo_fcover(
     psoil=None,
     soil_spectrum1=None,
     soil_spectrum2=None,
-    fapar_slice=slice[0, 300],
-    albedo_slice=slice[0, -100],
+    fapar_slice=slice(0, 300),
+    albedo_slice=slice(0, -100),
 ):
     """A function to calculate fCover, fAPAR and albedo.
     fCover is just `1-too`. You can select the spectral

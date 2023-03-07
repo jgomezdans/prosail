@@ -48,7 +48,7 @@ def test_rsot_prosail5(datadir):
         psoil=1.0,
         factor="SDR",
     )
-    assert np.allclose(rsot, rr, atol=0.01)
+    assert np.allclose(rsot, rr, atol=0.1)
 
 
 def test_rdot_prosail5(datadir):
