@@ -7,7 +7,7 @@ from .FourSAIL import foursail
 from .prospect_d import run_prospect
 
 
-def calculate_fapar_albedo_fcover(
+def calculate_fcover_fapar_albedo(
     n,
     cab,
     car,
