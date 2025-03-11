@@ -604,7 +604,7 @@ def foursail(
     rdot = rdo + tdd * rsoil * (tdo + too) / dn
     rsodt = (
         (tss + tsd) * tdo + (tsd + tss * rsoil * rdd) * too
-    ) * rsoil / dn + rsod
+    ) * rsoil / dn 
     rsost = rso + tsstoo * rsoil
     rsot = rsost + rsodt
 
